@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 
-
 import 'package:dy_app/billShows.dart';
 import 'package:dy_app/databasehelper.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +9,7 @@ import 'DailySafeDate.dart';
 import 'bill.dart';
 import 'cashIn.dart';
 import 'dailySafe.dart';
-import 'info.dart';
+import '01_mandoub_info.dart';
 import 'Reps/reports.dart';
 import 'results.dart';
 import 'syncronize.dart';
@@ -47,7 +46,6 @@ class _LoginState extends State<Login> {
     });
   }
 
-
   Future syncToMysqlCash() async {
     await SyncronizationData().fetchAllCashIns().then((cashList) async {
       EasyLoading.show(status: 'من فضلك لا تغلق التطبيق جاري رفع البيانات');
@@ -64,8 +62,6 @@ class _LoginState extends State<Login> {
     });
   }
 
-
-
   Future isInteret() async {
     await SyncronizationData.isInternet().then((connection) {
       if (connection) {
@@ -77,14 +73,6 @@ class _LoginState extends State<Login> {
       }
     });
   }
-
-  // Future syncUsersToSqlite() async {
-  //   await SyncronizationData().GetAllUsersAndSaveSQlite().then((_) async {
-  //     EasyLoading.show(status: 'Dont close app. we are sync...');
-  //     await SyncronizationData().GetAllUsersAndSaveSQlite();
-  //     EasyLoading.showSuccess('Successfully save to mysql');
-  //   });
-  // }
 
   Future fetchSyncItemsData() async {
     var dbclient = await conn.db;
@@ -180,11 +168,12 @@ class _LoginState extends State<Login> {
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-        gradient: LinearGradient(
-        begin: Alignment.center,
-        end: Alignment.bottomCenter,
-        colors: [Colors.white, Colors.blueGrey],
-    ),),
+          gradient: LinearGradient(
+            begin: Alignment.center,
+            end: Alignment.bottomCenter,
+            colors: [Colors.white, Colors.blueGrey],
+          ),
+        ),
         child: ListView(
           children: [
             Row(
@@ -193,9 +182,11 @@ class _LoginState extends State<Login> {
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => Info(InfoList: newData)));
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => Info(InfoList: newData),
+                      ),
+                    );
                   },
                   child: Text("مرحبا أ/ ${newData[0]["PersonName"]} ",
                       textDirection: TextDirection.ltr,
@@ -210,6 +201,7 @@ class _LoginState extends State<Login> {
             ),
             GestureDetector(
               onTap: () async {},
+              /////////////////////////////////////////////////////////////
               child: Container(
                 width: MediaQuery.of(context).size.width * .2,
                 height: MediaQuery.of(context).size.height * .3,
@@ -224,31 +216,36 @@ class _LoginState extends State<Login> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 GestureDetector(
-                    child: Text(
-                      "ارسال المعاملات الي الاون لاين  ",
-                      textDirection: TextDirection.rtl,
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.red,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'GE SS Two',
-                      ),
-                    ),
-                    onTap: () async {
-                      await SyncronizationData.isInternet().then((connection) {
+                  onTap: () async {
+                    await SyncronizationData.isInternet().then(
+                      (connection) {
                         if (connection) {
                           //syncToMysql();
                           syncToMysqlBillsDet();
                           syncToMysqlBills();
 
-
                           print("Internet connection available");
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text("No Internet")));
+                            SnackBar(
+                              content: Text("No Internet"),
+                            ),
+                          );
                         }
-                      });
-                    }),
+                      },
+                    );
+                  },
+                  child: Text(
+                    "ارسال المعاملات الي الاون لاين  ",
+                    textDirection: TextDirection.rtl,
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'GE SS Two',
+                    ),
+                  ),
+                ),
                 GestureDetector(
                     child: Text(
                       "ارسال التوريدات الي الاون لاين  ",
@@ -263,9 +260,8 @@ class _LoginState extends State<Login> {
                     onTap: () async {
                       await SyncronizationData.isInternet().then((connection) {
                         if (connection) {
-
-                           syncToMysqlCash();
-                           syncToMysqlCashDet();
+                          syncToMysqlCash();
+                          syncToMysqlCashDet();
 
                           print("Internet connection available");
                         } else {
@@ -274,31 +270,12 @@ class _LoginState extends State<Login> {
                         }
                       });
                     }),
-                // GestureDetector(
-                //   onTap: (){
-                //   syncUsersToSqlite();
-                //    // SyncronizationData().GetAllAndSaveSQlite();
-                //   },
-                //   child: Container(
-                //     child: Center(
-                //       child: Text(
-                //         "تحديث واستقبال بيانات  الاون لاين ",
-                //         textDirection: TextDirection.rtl,
-                //         style: TextStyle(
-                //           fontSize: 24,
-                //           fontWeight: FontWeight.bold,
-                //           fontFamily: 'GE SS Two',
-                //         ),
-                //       ),
-                //     ),
-                //   ),
-                //
-                // ),
                 Container(
-                  width: MediaQuery.of(context).size.width* .9,
-                  child: ElevatedButton(onPressed: (){
-                    fetchSyncItemsData();
-                  },
+                  width: MediaQuery.of(context).size.width * .9,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      fetchSyncItemsData();
+                    },
                     child: Text(
                       "تحديث واستقبال بيانات الاصناف الاون لاين ",
                       textDirection: TextDirection.rtl,
@@ -312,10 +289,11 @@ class _LoginState extends State<Login> {
                   ),
                 ),
                 Container(
-                  width: MediaQuery.of(context).size.width* .9,
-                  child: ElevatedButton(onPressed: (){
-                    fetchSyncTVData();
-                  },
+                  width: MediaQuery.of(context).size.width * .9,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      fetchSyncTVData();
+                    },
                     child: Text(
                       "تحديث واستقبال بيانات الدليل الاون لاين ",
                       textDirection: TextDirection.rtl,
@@ -341,9 +319,10 @@ class _LoginState extends State<Login> {
                   padding: const EdgeInsets.all(2.0),
                   child: GestureDetector(
                     onTap: () async {
-
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => const Bill()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const Bill()));
                     },
                     child: Container(
                       decoration:
@@ -351,11 +330,11 @@ class _LoginState extends State<Login> {
                       child: Column(
                         children: [
                           Container(
-                            decoration: BoxDecoration(image: DecorationImage(fit: BoxFit.fill,image: AssetImage("assets/images/1.jpg"))),
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    fit: BoxFit.fill,
+                                    image: AssetImage("assets/images/1.jpg"))),
                             height: MediaQuery.of(context).size.height * .17,
-
-
-
                           ),
                           Text(
                             "فواتير البيع",
@@ -404,7 +383,6 @@ class _LoginState extends State<Login> {
                       ),
                       //color: Colors.white,
                     ),
-
                   ),
                 ),
                 Padding(
@@ -418,13 +396,16 @@ class _LoginState extends State<Login> {
                     },
                     child: Container(
                       decoration:
-                      BoxDecoration(border: Border.all(color: Colors.grey)),
+                          BoxDecoration(border: Border.all(color: Colors.grey)),
                       child: Column(
                         children: [
                           Container(
-                            decoration: BoxDecoration(image: DecorationImage(fit: BoxFit.fill,image: AssetImage("assets/images/cash.jpg"))),
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    fit: BoxFit.fill,
+                                    image:
+                                        AssetImage("assets/images/cash.jpg"))),
                             height: MediaQuery.of(context).size.height * .17,
-
                           ),
                           Text(
                             "توريدات نقديه",
@@ -439,7 +420,6 @@ class _LoginState extends State<Login> {
                       ),
                       //color: Colors.white,
                     ),
-
                   ),
                 ),
                 Padding(
@@ -457,7 +437,11 @@ class _LoginState extends State<Login> {
                       child: Column(
                         children: [
                           Container(
-                            decoration: BoxDecoration(image: DecorationImage(fit: BoxFit.fill,image: AssetImage("assets/images/report.jpg"))),
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    fit: BoxFit.fill,
+                                    image: AssetImage(
+                                        "assets/images/report.jpg"))),
                             height: MediaQuery.of(context).size.height * .17,
                           ),
                           Text(
@@ -490,7 +474,11 @@ class _LoginState extends State<Login> {
                       child: Column(
                         children: [
                           Container(
-                            decoration: BoxDecoration(image: DecorationImage(fit: BoxFit.fill,image: AssetImage("assets/images/target.jpg"))),
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    fit: BoxFit.fill,
+                                    image: AssetImage(
+                                        "assets/images/target.jpg"))),
                             height: MediaQuery.of(context).size.height * .17,
                           ),
                           Text(
@@ -523,9 +511,12 @@ class _LoginState extends State<Login> {
                       child: Column(
                         children: [
                           Container(
-                            decoration: BoxDecoration(image: DecorationImage(fit: BoxFit.fill,image: AssetImage("assets/images/pay.jpg"))),
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    fit: BoxFit.fill,
+                                    image:
+                                        AssetImage("assets/images/pay.jpg"))),
                             height: MediaQuery.of(context).size.height * .17,
-
                           ),
                           Text(
                             "تحصيلات اليوم ",

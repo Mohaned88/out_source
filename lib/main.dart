@@ -1,4 +1,5 @@
 
+import 'package:dy_app/splash/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'databasehelper.dart';
@@ -39,7 +40,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const Reg(),
+      home: const Splash(),
       debugShowCheckedModeBanner: false,
       builder: EasyLoading.init(),
     );
