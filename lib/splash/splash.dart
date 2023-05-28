@@ -13,7 +13,7 @@ class Splash extends StatelessWidget {
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
 
-   /* Timer(
+    Timer(
       Duration(seconds: 4),
       () {
         Navigator.of(context).pushReplacement(
@@ -23,49 +23,34 @@ class Splash extends StatelessWidget {
         );
       },
     );
-*/
     return Scaffold(
-      body: Container(
-        width: w,
-        height: h,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            SizedBox(
-              width: w,
-              height: h,
-              child: Opacity(
-                opacity: 0.2,
-                child: Image.asset(
-                  'assets/images/splash.png',
-                  fit: BoxFit.fill,
-                  color: Colors.blueGrey,
-                ),
-              ),
-            ),
-            TranslationAnimatedWidget.tween(
+      body: Center(
+        child: Container(
+          width: w*0.9,
+          height: w*0.9,
+          child: TranslationAnimatedWidget.tween(
+            enabled: true,
+            //update this boolean to forward/reverse the animation
+            translationDisabled: Offset(0, 320),
+            translationEnabled: Offset(0, 0),
+            child: OpacityAnimatedWidget.tween(
               enabled: true,
-              //update this boolean to forward/reverse the animation
-              translationDisabled: Offset(0, 320),
-              translationEnabled: Offset(0, 0),
-              child: OpacityAnimatedWidget.tween(
+              opacityDisabled: 0,
+              opacityEnabled: 0.9,
+              duration: Duration(milliseconds: 1600),
+              child: ScaleAnimatedWidget.tween(
                 enabled: true,
-                opacityDisabled: 0,
-                opacityEnabled: 0.9,
-                duration: Duration(milliseconds: 1600),
-                child: ScaleAnimatedWidget.tween(
-                  enabled: true,
-                  duration: Duration(milliseconds: 1500),
-                  scaleDisabled: 0.5,
-                  scaleEnabled: 1,
-                  child: Image.asset(
-                    'assets/images/full_logo.png',
-                  ),
+                duration: Duration(milliseconds: 1500),
+                scaleDisabled: 0.5,
+                scaleEnabled: 1,
+                child: Image.asset(
+                  'assets/images/full_logo.png',
+                  fit: BoxFit.contain,
                 ),
               ),
-              duration: Duration(milliseconds: 1500),
             ),
-          ],
+            duration: Duration(milliseconds: 1500),
+          ),
         ),
       ),
     );
