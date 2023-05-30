@@ -326,7 +326,7 @@ class _LoginState extends State<Login> {
                     },
                     child: Container(
                       decoration:
-                          BoxDecoration(border: Border.all(color: Colors.grey)),
+                      BoxDecoration(border: Border.all(color: Colors.grey)),
                       child: Column(
                         children: [
                           Container(

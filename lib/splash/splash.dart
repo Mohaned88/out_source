@@ -5,6 +5,8 @@ import 'package:animated_widgets/widgets/translation_animated.dart';
 import 'package:dy_app/register.dart';
 import 'package:flutter/material.dart';
 
+import '../resources/colors.dart';
+
 class Splash extends StatelessWidget {
   const Splash({Key? key}) : super(key: key);
 
@@ -31,7 +33,7 @@ class Splash extends StatelessWidget {
 
     );
     return Scaffold(
-      backgroundColor: Color(0xff635AD9),
+      backgroundColor: AppColors.mainColor,
       body: Container(
         width: w,
         height: h,
