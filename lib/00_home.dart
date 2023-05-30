@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:dy_app/billShows.dart';
+import 'package:dy_app/components/send_and_receive_comp.dart';
 import 'package:dy_app/databasehelper.dart';
+import 'package:dy_app/resources/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'DailySafeDate.dart';
@@ -165,47 +167,114 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
+    var h = MediaQuery.of(context).size.height;
+    var w = MediaQuery.of(context).size.width;
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: AppColors.mainColor,
+        toolbarHeight: w*0.2,
+        automaticallyImplyLeading: false,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            bottomRight: Radius.circular(w * 0.1),
+            bottomLeft: Radius.circular(w * 0.1),
+          ),
+        ),
+        title: GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => Info(InfoList: newData),
+              ),
+            );
+          },
+          child: Text("مرحبا أ/ ${newData[0]["PersonName"]} ",
+              textDirection: TextDirection.rtl,
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'GE SS Two',
+              )),
+        ),
+        actions: [
+          Padding(
+            padding: EdgeInsets.only(right: w*0.05),
+            child: CircleAvatar(
+              backgroundColor: Colors.green.withOpacity(0.8),
+              radius: w*0.06,
+              child: Center(
+                child: Text(
+                  '${newData[0]["PersonName"].toString().split(' ')[0].split('')[0]}',
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+        centerTitle: true,
+      ),
       body: Container(
-        decoration: BoxDecoration(
+        /*decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.center,
             end: Alignment.bottomCenter,
             colors: [Colors.white, Colors.blueGrey],
           ),
-        ),
+        ),*/
         child: ListView(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => Info(InfoList: newData),
-                      ),
-                    );
-                  },
-                  child: Text("مرحبا أ/ ${newData[0]["PersonName"]} ",
-                      textDirection: TextDirection.ltr,
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'GE SS Two',
-                      )),
-                ),
-              ],
-            ),
-            GestureDetector(
+/*            GestureDetector(
               onTap: () async {},
               /////////////////////////////////////////////////////////////
               child: Container(
                 width: MediaQuery.of(context).size.width * .2,
                 height: MediaQuery.of(context).size.height * .3,
                 child: Image.asset("assets/images/mand.jpg"),
+              ),
+            ),*/
+            Text("التحديثات",
+              textDirection: TextDirection.rtl,
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'GE SS Two',
+              ),
+            ),
+            SizedBox(
+              width: double.infinity,
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SendAndReceiveComp(
+                    color: Colors.amber,
+                    imagePath: 'assets/images/transaction_icon.png',
+                    text: 'ارسال المعاملات',
+                  ),
+                  SendAndReceiveComp(
+                    color: Colors.green,
+                    imagePath: 'assets/images/supplies_icon.png',
+                    text: 'ارسال التوريدات',
+                  ),
+                  SendAndReceiveComp(
+                    color: Colors.red,
+                    imagePath: 'assets/images/file_download_icon.png',
+                    text: 'استقبال الحسابات',
+                  ),
+                  SendAndReceiveComp(
+                    color: Colors.blue,
+                    imagePath: 'assets/images/category_download_icon.png',
+                    text: 'استقبال الأصناف',
+                  ),
+                ],
               ),
             ),
             SizedBox(
