@@ -40,14 +40,12 @@ class SendAndReceiveComp extends StatelessWidget {
                 shape: BoxShape.circle,
                 color: Colors.white.withOpacity(0.5),
               ),
-              child: SizedBox(
+              child: Image.asset(
+                imagePath ?? 'assets/images/upload_icon.png',
                 width: 0.1,
                 height: 0.1,
-                child: Image.asset(
-                  imagePath ?? 'assets/images/upload_icon.png',
-                  color: color,
-                  fit: BoxFit.contain,
-                ),
+                color: color,
+                fit: BoxFit.contain,
               ),
             ),
             Text(
