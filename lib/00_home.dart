@@ -172,8 +172,9 @@ class _LoginState extends State<Login> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.mainColor,
-        toolbarHeight: w*0.2,
+        toolbarHeight: w * 0.2,
         automaticallyImplyLeading: false,
+        scrolledUnderElevation: 10,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
             bottomRight: Radius.circular(w * 0.1),
@@ -200,10 +201,10 @@ class _LoginState extends State<Login> {
         ),
         actions: [
           Padding(
-            padding: EdgeInsets.only(right: w*0.05),
+            padding: EdgeInsets.only(right: w * 0.05),
             child: CircleAvatar(
               backgroundColor: Colors.green.withOpacity(0.8),
-              radius: w*0.06,
+              radius: w * 0.06,
               child: Center(
                 child: Text(
                   '${newData[0]["PersonName"].toString().split(' ')[0].split('')[0]}',
@@ -227,6 +228,7 @@ class _LoginState extends State<Login> {
             colors: [Colors.white, Colors.blueGrey],
           ),
         ),*/
+        padding: EdgeInsets.symmetric(horizontal: w * 0.02),
         child: ListView(
           children: [
 /*            GestureDetector(
@@ -238,7 +240,9 @@ class _LoginState extends State<Login> {
                 child: Image.asset("assets/images/mand.jpg"),
               ),
             ),*/
-            Text("التحديثات",
+            SizedBox(height: w * 0.02),
+            Text(
+              "التحديثات",
               textDirection: TextDirection.rtl,
               style: TextStyle(
                 fontSize: 20,
@@ -247,6 +251,7 @@ class _LoginState extends State<Login> {
                 fontFamily: 'GE SS Two',
               ),
             ),
+            SizedBox(height: w * 0.02),
             SizedBox(
               width: double.infinity,
               child: Row(
@@ -258,29 +263,76 @@ class _LoginState extends State<Login> {
                     color: Colors.amber,
                     imagePath: 'assets/images/transaction_icon.png',
                     text: 'ارسال المعاملات',
+                    onTap: () async {
+                      await SyncronizationData.isInternet().then(
+                        (connection) {
+                          if (connection) {
+                            //syncToMysql();
+                            syncToMysqlBillsDet();
+                            syncToMysqlBills();
+
+                            print("Internet connection available");
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text("No Internet"),
+                              ),
+                            );
+                          }
+                        },
+                      );
+                    },
                   ),
                   SendAndReceiveComp(
                     color: Colors.green,
                     imagePath: 'assets/images/supplies_icon.png',
                     text: 'ارسال التوريدات',
+                    onTap: () async {
+                      await SyncronizationData.isInternet().then((connection) {
+                        if (connection) {
+                          syncToMysqlCash();
+                          syncToMysqlCashDet();
+
+                          print("Internet connection available");
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text("No Internet")));
+                        }
+                      });
+                    },
                   ),
                   SendAndReceiveComp(
                     color: Colors.red,
                     imagePath: 'assets/images/file_download_icon.png',
                     text: 'استقبال الحسابات',
+                    onTap: () {
+                      fetchSyncTVData();
+                    },
                   ),
                   SendAndReceiveComp(
                     color: Colors.blue,
                     imagePath: 'assets/images/category_download_icon.png',
                     text: 'استقبال الأصناف',
+                    onTap: () {
+                      fetchSyncItemsData();
+                    },
                   ),
                 ],
               ),
             ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * .1,
+            SizedBox(height: w * 0.02),
+            Text(
+              "الخدمات",
+              textDirection: TextDirection.rtl,
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'GE SS Two',
+              ),
             ),
-            Column(
+            SizedBox(height: w * 0.02),
+            /*Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -315,7 +367,7 @@ class _LoginState extends State<Login> {
                     ),
                   ),
                 ),
-                GestureDetector(
+             GestureDetector(
                     child: Text(
                       "ارسال التوريدات الي الاون لاين  ",
                       textDirection: TextDirection.rtl,
@@ -379,10 +431,11 @@ class _LoginState extends State<Login> {
             ),
             SizedBox(
               height: MediaQuery.of(context).size.height * .1,
-            ),
+            ),*/
             GridView.count(
               shrinkWrap: true,
-              crossAxisCount: 2,
+              crossAxisCount: 3,
+              childAspectRatio: 9 / 11,
               children: [
                 Padding(
                   padding: const EdgeInsets.all(2.0),
@@ -394,22 +447,27 @@ class _LoginState extends State<Login> {
                               builder: (context) => const Bill()));
                     },
                     child: Container(
-                      decoration:
-                      BoxDecoration(border: Border.all(color: Colors.grey)),
+                      //decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
                       child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Container(
                             decoration: BoxDecoration(
+                                shape: BoxShape.circle,
                                 image: DecorationImage(
-                                    fit: BoxFit.fill,
+                                    fit: BoxFit.cover,
                                     image: AssetImage("assets/images/1.jpg"))),
-                            height: MediaQuery.of(context).size.height * .17,
+                            height: w * 0.18,
+                            width: w * 0.18,
                           ),
                           Text(
-                            "فواتير البيع",
+                            "فواتير \n البيع",
                             textDirection: TextDirection.rtl,
+                            textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 24,
+                              fontSize: 13,
                               fontWeight: FontWeight.bold,
                               fontFamily: 'GE SS Two',
                             ),
@@ -430,20 +488,31 @@ class _LoginState extends State<Login> {
                               builder: (context) => const BillShows()));
                     },
                     child: Container(
-                      decoration:
-                          BoxDecoration(border: Border.all(color: Colors.grey)),
+                      //decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
                       child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Container(
-                            width: MediaQuery.of(context).size.width * .2,
-                            height: MediaQuery.of(context).size.height * .15,
-                            child: Image.asset("assets/images/bill.jpg"),
+                            width: w * 0.18,
+                            height: w * 0.18,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                image: AssetImage("assets/images/bill.jpg"),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            // child: Image.asset("assets/images/bill.jpg"),
                           ),
                           Text(
-                            "استعراض الفواتير",
+                            "استعراض \n الفواتير",
                             textDirection: TextDirection.rtl,
+                            textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 24,
+                              fontSize: 13,
+                              overflow: TextOverflow.ellipsis,
                               fontWeight: FontWeight.bold,
                               fontFamily: 'GE SS Two',
                             ),
@@ -464,23 +533,31 @@ class _LoginState extends State<Login> {
                               builder: (context) => const CashIn()));
                     },
                     child: Container(
-                      decoration:
-                          BoxDecoration(border: Border.all(color: Colors.grey)),
+                      // decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
                       child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Container(
                             decoration: BoxDecoration(
-                                image: DecorationImage(
-                                    fit: BoxFit.fill,
-                                    image:
-                                        AssetImage("assets/images/cash.jpg"))),
-                            height: MediaQuery.of(context).size.height * .17,
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                fit: BoxFit.cover,
+                                image: AssetImage(
+                                  "assets/images/cash.jpg",
+                                ),
+                              ),
+                            ),
+                           width: w*0.18,
+                            height: w*0.18,
                           ),
                           Text(
-                            "توريدات نقديه",
+                            "توريدات \n نقديه",
                             textDirection: TextDirection.rtl,
+                            textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 24,
+                              fontSize: 13,
                               fontWeight: FontWeight.bold,
                               fontFamily: 'GE SS Two',
                             ),
@@ -501,23 +578,28 @@ class _LoginState extends State<Login> {
                               builder: (context) => const Reports()));
                     },
                     child: Container(
-                      decoration:
-                          BoxDecoration(border: Border.all(color: Colors.grey)),
+                      // decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
                       child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Container(
                             decoration: BoxDecoration(
+                              shape: BoxShape.circle,
                                 image: DecorationImage(
-                                    fit: BoxFit.fill,
+                                    fit: BoxFit.cover,
                                     image: AssetImage(
                                         "assets/images/report.jpg"))),
-                            height: MediaQuery.of(context).size.height * .17,
+                            width: w*0.18,
+                            height: w*0.18,
                           ),
                           Text(
-                            "تقارير",
+                            "تقارير \n ",
                             textDirection: TextDirection.rtl,
+                            textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 24,
+                              fontSize: 13,
                               fontWeight: FontWeight.bold,
                               fontFamily: 'GE SS Two',
                             ),
@@ -538,23 +620,28 @@ class _LoginState extends State<Login> {
                               builder: (context) => const Results()));
                     },
                     child: Container(
-                      decoration:
-                          BoxDecoration(border: Border.all(color: Colors.grey)),
+                      // decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
                       child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Container(
                             decoration: BoxDecoration(
+                              shape: BoxShape.circle,
                                 image: DecorationImage(
-                                    fit: BoxFit.fill,
+                                    fit: BoxFit.cover,
                                     image: AssetImage(
                                         "assets/images/target.jpg"))),
-                            height: MediaQuery.of(context).size.height * .17,
+                            width: w*0.18,
+                            height: w*0.18,
                           ),
                           Text(
-                            "مستهدف المندوب",
+                            "مستهدف \n المندوب",
                             textDirection: TextDirection.rtl,
+                            textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 20,
+                              fontSize: 13,
                               fontWeight: FontWeight.bold,
                               fontFamily: 'GE SS Two',
                             ),
@@ -575,23 +662,28 @@ class _LoginState extends State<Login> {
                               builder: (context) => const dailySafeDate()));
                     },
                     child: Container(
-                      decoration:
-                          BoxDecoration(border: Border.all(color: Colors.grey)),
+                      // decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
                       child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Container(
                             decoration: BoxDecoration(
+                              shape: BoxShape.circle,
                                 image: DecorationImage(
-                                    fit: BoxFit.fill,
+                                    fit: BoxFit.cover,
                                     image:
                                         AssetImage("assets/images/pay.jpg"))),
-                            height: MediaQuery.of(context).size.height * .17,
+                            width: w*0.18,
+                            height: w*0.18,
                           ),
                           Text(
-                            "تحصيلات اليوم ",
+                            "تحصيلات \n اليوم ",
                             textDirection: TextDirection.rtl,
+                            textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 20,
+                              fontSize: 13,
                               fontWeight: FontWeight.bold,
                               fontFamily: 'GE SS Two',
                             ),
