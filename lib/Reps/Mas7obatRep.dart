@@ -23,8 +23,8 @@ class _Mas7obatRepShowState extends State<Mas7obatRepShow> {
   @override
   void initState() {
     data = widget.data;
-print("after");
-print(data);
+    print("after");
+    print(data);
     super.initState();
   }
   // Future<Uint8List> _generatePdf(

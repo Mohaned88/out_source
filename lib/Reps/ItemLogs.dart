@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 
 
 class ItemLogShow extends StatefulWidget {
-   ItemLogShow({Key? key,required this.data}) : super(key: key);
+  ItemLogShow({Key? key,required this.data}) : super(key: key);
   List data;
   @override
   State<ItemLogShow> createState() => _ItemLogShowState();
@@ -36,7 +36,7 @@ class _ItemLogShowState extends State<ItemLogShow> {
                   DataColumn(label: Text('نوع المعامله')),
                   DataColumn(label: Text('مضاف')),
                   DataColumn(label: Text('مسحوبات')),
-               //   DataColumn(label: Text('x')),
+                  //   DataColumn(label: Text('x')),
 
                 ],
                 rows: List.generate(data.length, (index) {
@@ -48,7 +48,7 @@ class _ItemLogShowState extends State<ItemLogShow> {
                     DataCell(Container(child: Text(c))),
                     DataCell(Container( child: Text("$d"))),
                     DataCell(Container( child: Text("$e"))),
-                 ///   DataCell(Container( child: Text("$x"))),
+                    ///   DataCell(Container( child: Text("$x"))),
                   ]);
                 }),
               ),

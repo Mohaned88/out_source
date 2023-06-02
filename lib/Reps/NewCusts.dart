@@ -7,7 +7,7 @@ import 'package:printing/printing.dart';
 import 'package:flutter/material.dart';
 
 class NewCustsRepShow extends StatefulWidget {
-   NewCustsRepShow({Key? key,required this.data}) : super(key: key);
+  NewCustsRepShow({Key? key,required this.data}) : super(key: key);
   List data;
   @override
   State<NewCustsRepShow> createState() => _NewCustsRepShowState();

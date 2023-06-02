@@ -7,8 +7,8 @@ import 'package:printing/printing.dart';
 import 'package:flutter/material.dart';
 
 class OnlyOneRepShow extends StatefulWidget {
-   OnlyOneRepShow({Key? key,required this.data}) : super(key: key);
-List data;
+  OnlyOneRepShow({Key? key,required this.data}) : super(key: key);
+  List data;
   @override
   State<OnlyOneRepShow> createState() => _OnlyOneRepShowState();
 }

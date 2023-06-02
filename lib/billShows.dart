@@ -33,7 +33,7 @@ class _BillShowsState extends State<BillShows> {
     late List ff = [];
     var dbclient = await conn.db;
     List<Map<String, dynamic>> maps =
-        await dbclient.rawQuery('select * from Bill order by bill_date desc');
+        await dbclient.rawQuery('select *,Organizations.orgName from Bill  INNER Join Organizations ON Bill.customer_id = Organizations.org_ID  order by bill_date desc');
     for (var item in maps) {
       ff.add(item);
     }
@@ -44,12 +44,11 @@ class _BillShowsState extends State<BillShows> {
     print(ff.length);
     return ff;
   }
-
   Future billListNum() async {
     late List ff = [];
     var dbclient = await conn.db;
     List<Map<String, dynamic>> maps = await dbclient.rawQuery(
-        'select * from Bill where bill_id = ${billNum.text}  order by bill_date desc ');
+        'select *,Organizations.orgName from Bill  INNER Join Organizations ON Bill.customer_id = Organizations.org_ID where bill_id = ${billNum.text}  order by bill_date desc ');
     for (var item in maps) {
       ff.add(item);
     }
@@ -71,7 +70,7 @@ class _BillShowsState extends State<BillShows> {
     final String time = formatter.format(now);
     print(time);
     List<Map<String, dynamic>> maps = await dbclient.rawQuery(
-        'select * from Bill where bill_date = "$getDate1" order by bill_date desc ');
+        'select *,Organizations.orgName from Bill  INNER Join Organizations ON Bill.customer_id = Organizations.org_ID where bill_date = "$getDate1" order by bill_date desc ');
     for (var item in maps) {
       ff.add(item);
     }
@@ -103,7 +102,7 @@ class _BillShowsState extends State<BillShows> {
     final String time = formatter.format(now);
     print(time);
     List<Map<String, dynamic>> maps = await dbclient.rawQuery(
-        'select * from Bill where bill_date = "$time" order by bill_date desc ');
+        'select *,Organizations.orgName from Bill  INNER Join Organizations ON Bill.customer_id = Organizations.org_ID where bill_date = "$time" order by bill_date desc ');
     for (var item in maps) {
       ff.add(item);
     }
@@ -126,7 +125,7 @@ class _BillShowsState extends State<BillShows> {
     print(time);
     print(time2);
     List<Map<String, dynamic>> maps = await dbclient.rawQuery(
-        'select * from Bill where bill_date Between "$time2" AND "$time"  order by bill_date desc ');
+        'select *,Organizations.orgName from Bill  INNER Join Organizations ON Bill.customer_id = Organizations.org_ID where bill_date Between "$time2" AND "$time"  order by bill_date desc ');
     for (var item in maps) {
       ff.add(item);
     }
@@ -148,7 +147,7 @@ class _BillShowsState extends State<BillShows> {
     print(time);
     print(time2);
     List<Map<String, dynamic>> maps = await dbclient.rawQuery(
-        'select * from Bill where bill_date Between "$time2" AND "$time"  order by bill_date desc');
+        'select *,Organizations.orgName from Bill  INNER Join Organizations ON Bill.customer_id = Organizations.org_ID where bill_date Between "$time2" AND "$time"  order by bill_date desc');
     for (var item in maps) {
       ff.add(item);
     }
@@ -412,6 +411,31 @@ class _BillShowsState extends State<BillShows> {
                                         ),
                                         Text(
                                           "اجمالي الفاتورة",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'GE SS Two',
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    //orgName
+                                    Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          list![index]['orgName'].toString(),
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'GE SS Two',
+                                          ),
+                                        ),
+                                        Text(
+                                          "العميل ",
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,

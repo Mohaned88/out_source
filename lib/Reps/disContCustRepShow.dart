@@ -4,7 +4,7 @@
 import 'package:flutter/material.dart';
 
 class DisContCustRepShow extends StatefulWidget {
-   DisContCustRepShow({Key? key,required this.data}) : super(key: key);
+  DisContCustRepShow({Key? key,required this.data}) : super(key: key);
   List data ;
   @override
   State<DisContCustRepShow> createState() => _DisContCustRepShowState();

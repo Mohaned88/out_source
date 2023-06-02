@@ -8,8 +8,8 @@ import 'package:printing/printing.dart';
 import 'package:flutter/material.dart';
 
 class InventoryRepShow extends StatefulWidget {
-   InventoryRepShow({Key? key,required this.data}) : super(key: key);
-List data ;
+  InventoryRepShow({Key? key,required this.data}) : super(key: key);
+  List data ;
   @override
   State<InventoryRepShow> createState() => _InventoryRepShowState();
 }

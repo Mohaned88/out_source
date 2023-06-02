@@ -111,18 +111,18 @@ class _IndebtednessRepShowState extends State<IndebtednessRepShow> {
 
   @override
 
+  // Calculate the total values for each column
+  Widget build(BuildContext context) {
     // Calculate the total values for each column
-    Widget build(BuildContext context) {
-      // Calculate the total values for each column
-      final totalCreditor = data.fold<double>(
-          0, (previous, current) => previous + (double.tryParse(current["totalCreditor"]) ?? 0.0)) ??
-          0;
-      final totalDebtor = data.fold<double>(
-          0, (previous, current) => previous + (double.tryParse(current["totalDebtor"]) ?? 0.0)) ??
-          0;
-      final totalNet = data.fold<double>(
-          0, (previous, current) => previous + ((double.tryParse(current["totalCreditor"]) ?? 0.0) - (double.tryParse(current["totalDebtor"]) ?? 0.0))) ??
-          0;
+    final totalCreditor = data.fold<double>(
+        0, (previous, current) => previous + (double.tryParse(current["totalCreditor"]) ?? 0.0)) ??
+        0;
+    final totalDebtor = data.fold<double>(
+        0, (previous, current) => previous + (double.tryParse(current["totalDebtor"]) ?? 0.0)) ??
+        0;
+    final totalNet = data.fold<double>(
+        0, (previous, current) => previous + ((double.tryParse(current["totalCreditor"]) ?? 0.0) - (double.tryParse(current["totalDebtor"]) ?? 0.0))) ??
+        0;
     return SafeArea(
       child: Column(
         children: [

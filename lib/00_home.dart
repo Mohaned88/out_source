@@ -183,6 +183,20 @@ class _LoginState extends State<Login> {
             bottomLeft: Radius.circular(w * 0.1),
           ),
         ),
+        leading:Padding(
+          padding: EdgeInsets.only(left: w*0.04),
+          child: Container(
+            width: w*0.12,
+            height: w*0.12,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              image: DecorationImage(image: AssetImage(
+                'assets/images/customer_logo/clogo.jpg',
+              ),),
+            ),
+          ),
+        ),
+        leadingWidth: w*0.18,
         title: GestureDetector(
           onTap: () {
             Navigator.push(

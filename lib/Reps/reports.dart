@@ -50,7 +50,7 @@ class _ReportsState extends State<Reports> {
     print(fff);
     return list2;
   }
-   double? tag;
+  double? tag;
 
   Future getSWData() async {
     List ff = [];
@@ -102,7 +102,7 @@ class _ReportsState extends State<Reports> {
     int  ? tagx    = tag?.toInt();
     final String url = "http://sales2563.dynamicsdb2.com/api/Mas7obat/$_mySelection1";
     var response =
-        await http.get(Uri.parse(url), headers: {"Accept": "application/json"});
+    await http.get(Uri.parse(url), headers: {"Accept": "application/json"});
     if (response.statusCode == 200) {
       print("Saving Data ");
       print(response.body);
@@ -120,8 +120,8 @@ class _ReportsState extends State<Reports> {
 
   Future GetAllIndebtednessData() async {
     final prefs = await SharedPreferences.getInstance();
-  double? tag  = prefs.getDouble("tag");
-     int? tagx    = tag?.toInt();
+    double? tag  = prefs.getDouble("tag");
+    int? tagx    = tag?.toInt();
     final String url = "http://sales2563.dynamicsdb2.com/api/Indebtedness/$tagx";
     var response =
     await http.get(Uri.parse(url), headers: {"Accept": "application/json"});
@@ -160,7 +160,7 @@ class _ReportsState extends State<Reports> {
 
     return jsonResponse;
   }
-///
+  ///
   Future GetGeneralDailyData() async {
 
     final String url = "http://sales2563.dynamicsdb2.com/api/GeneralDailyReport/$_mySelection";
@@ -185,7 +185,7 @@ class _ReportsState extends State<Reports> {
     final prefs = await SharedPreferences.getInstance();
     double?  tag  = prefs.getDouble("tag");
     int  ? tagx    = tag?.toInt();
-      final String url = "http://sales2563.dynamicsdb2.com/api/OnlyOne/$tagx";
+    final String url = "http://sales2563.dynamicsdb2.com/api/OnlyOne/$tagx";
     var response =
     await http.get(Uri.parse(url), headers: {"Accept": "application/json"});
     if (response.statusCode == 200) {
@@ -327,72 +327,72 @@ class _ReportsState extends State<Reports> {
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height * .26,
                 child:
-                    Container(
+                Container(
 
-                      child:
-                          Column(
+                  child:
+                  Column(
 
-                            children: [
-                              Text(
-                                "اجمالي مسحوبات عملاء المندوب",
-                                textDirection: TextDirection.rtl,
-                                style: (TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                              ),
-                              Container(
-                                  height:MediaQuery.of(context).size.height * .072,
-
-                                child: DropdownFormField(
-                                  onEmptyActionPressed: () async {},
-                                  decoration: InputDecoration(
-                                      border: OutlineInputBorder(),
-                                      suffixIcon: Icon(Icons.arrow_drop_down),
-                                      labelText: "عميل"),
-                                  onSaved: (dynamic str) {},
-                                  onChanged: (dynamic str) {print(str["org_ID"]);
-                                  _mySelection1=str["org_ID"].toString();
-                                  ;},
-
-                                  displayItemFn: (dynamic item) => Text(
-                                    (item ?? {})['orgName'] ?? '',
-                                    style: TextStyle(fontSize: 14),
-                                  ),
-                                  findFn: (dynamic str) async => data,
-                                  selectedFn: (dynamic item1, dynamic item2) {
-                                    if (item1 != null && item2 != null) {
-                                      return item1['orgName'] == item2['orgName'];
-                                    }
-                                    return false;
-                                  },
-                                  filterFn: (dynamic item, str) =>
-                                  item['orgName'].toLowerCase().indexOf(str.toLowerCase()) >= 0,
-                                  dropdownItemFn: (dynamic item, int position, bool focused,
-                                      bool selected, Function() onTap) {
-                                    return ListTile(
-                                      title: Text(item['orgName']),
-                                      subtitle: Text(
-                                        item['org_ID'].toString(),
-                                      ),selected: false,
-
-                                      tileColor:
-                                      focused ? Color.fromARGB(20, 0, 0, 0) : Colors.transparent,
-                                      onTap: onTap,
-                                    );
-                                  },),
-                              ),
-                              ElevatedButton(
-                                  onPressed: () async {
-                                    GetAllMas7obatData().then((value) {
-                                      print("before");
-                                      print(value);
-                                      Navigator.push(context, MaterialPageRoute(builder: (_)=>Mas7obatRepShow(data : value)));
-                                    });
-                                  },
-                                  child: Text("استعراض"))
-                            ],
-                          ),
+                    children: [
+                      Text(
+                        "اجمالي مسحوبات عملاء المندوب",
+                        textDirection: TextDirection.rtl,
+                        style: (TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                       ),
+                      Container(
+                        height:MediaQuery.of(context).size.height * .072,
+
+                        child: DropdownFormField(
+                          onEmptyActionPressed: () async {},
+                          decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              suffixIcon: Icon(Icons.arrow_drop_down),
+                              labelText: "عميل"),
+                          onSaved: (dynamic str) {},
+                          onChanged: (dynamic str) {print(str["org_ID"]);
+                          _mySelection1=str["org_ID"].toString();
+                          ;},
+
+                          displayItemFn: (dynamic item) => Text(
+                            (item ?? {})['orgName'] ?? '',
+                            style: TextStyle(fontSize: 14),
+                          ),
+                          findFn: (dynamic str) async => data,
+                          selectedFn: (dynamic item1, dynamic item2) {
+                            if (item1 != null && item2 != null) {
+                              return item1['orgName'] == item2['orgName'];
+                            }
+                            return false;
+                          },
+                          filterFn: (dynamic item, str) =>
+                          item['orgName'].toLowerCase().indexOf(str.toLowerCase()) >= 0,
+                          dropdownItemFn: (dynamic item, int position, bool focused,
+                              bool selected, Function() onTap) {
+                            return ListTile(
+                              title: Text(item['orgName']),
+                              subtitle: Text(
+                                item['org_ID'].toString(),
+                              ),selected: false,
+
+                              tileColor:
+                              focused ? Color.fromARGB(20, 0, 0, 0) : Colors.transparent,
+                              onTap: onTap,
+                            );
+                          },),
+                      ),
+                      ElevatedButton(
+                          onPressed: () async {
+                            GetAllMas7obatData().then((value) {
+                              print("before");
+                              print(value);
+                              Navigator.push(context, MaterialPageRoute(builder: (_)=>Mas7obatRepShow(data : value)));
+                            });
+                          },
+                          child: Text("استعراض"))
+                    ],
+                  ),
+                ),
               ),
-          //details
+              //details
               Container(
                 padding: EdgeInsets.all(35),
                 margin: EdgeInsets.all(20),
@@ -429,7 +429,7 @@ class _ReportsState extends State<Reports> {
                           print(str["Item_ID"]);
                           _mySelectionItem = str["Item_Name"];
                           setState(() {
-ItemCode = str["Item_ID"];
+                            ItemCode = str["Item_ID"];
                           });
                           ;
                         },
@@ -475,36 +475,36 @@ ItemCode = str["Item_ID"];
                 ),
               ),
               //end
-               Container(
-                  padding: EdgeInsets.all(35),
-                  margin: EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black, width: 4),
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      new BoxShadow(color: Colors.blueGrey, offset: new Offset(6.0, 6.0),),
-                    ],
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Text(
-                        "اجمالي مديونيات  كل عملاء المندوب",
-                        textDirection: TextDirection.rtl,
-                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 13),
-                      ),
-                      ElevatedButton(
-                        onPressed: () async {
-                          GetAllIndebtednessData().then((value) {
-                            print(value);
-                            Navigator.push(context, MaterialPageRoute(builder: (_) => IndebtednessRepShow(data: value)));
-                          });
-                        },
-                        child: Text("استعراض"),
-                      ),
-                    ],
-                  ),
+              Container(
+                padding: EdgeInsets.all(35),
+                margin: EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black, width: 4),
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    new BoxShadow(color: Colors.blueGrey, offset: new Offset(6.0, 6.0),),
+                  ],
                 ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Text(
+                      "اجمالي مديونيات  كل عملاء المندوب",
+                      textDirection: TextDirection.rtl,
+                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 13),
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        GetAllIndebtednessData().then((value) {
+                          print(value);
+                          Navigator.push(context, MaterialPageRoute(builder: (_) => IndebtednessRepShow(data: value)));
+                        });
+                      },
+                      child: Text("استعراض"),
+                    ),
+                  ],
+                ),
+              ),
               Container(
                 padding: EdgeInsets.all(35),
                 margin: EdgeInsets.all(20),
@@ -574,10 +574,10 @@ ItemCode = str["Item_ID"];
                     Container(
                       child: ElevatedButton(
                           onPressed: () async {
-                              GetGeneralDailyData().then((value) {
-                                print(value);
-                                Navigator.push(context, MaterialPageRoute(builder: (_)=>GeneralDailyRepShow(data : value)));
-                              });
+                            GetGeneralDailyData().then((value) {
+                              print(value);
+                              Navigator.push(context, MaterialPageRoute(builder: (_)=>GeneralDailyRepShow(data : value)));
+                            });
 
 
                           },
