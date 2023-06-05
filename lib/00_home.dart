@@ -170,89 +170,79 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        backgroundColor: AppColors.mainColor,
-        toolbarHeight: w * 0.2,
-        automaticallyImplyLeading: false,
-        scrolledUnderElevation: 10,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            bottomRight: Radius.circular(w * 0.1),
-            bottomLeft: Radius.circular(w * 0.1),
-          ),
-        ),
-        leading:Padding(
-          padding: EdgeInsets.only(left: w*0.04),
-          child: Container(
-            width: w*0.12,
-            height: w*0.12,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              image: DecorationImage(image: AssetImage(
-                'assets/images/customer_logo/clogo.jpg',
-              ),),
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          backgroundColor: AppColors.mainColor,
+          toolbarHeight: w * 0.2,
+          automaticallyImplyLeading: false,
+          scrolledUnderElevation: 10,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              bottomRight: Radius.circular(w * 0.1),
+              bottomLeft: Radius.circular(w * 0.1),
             ),
           ),
-        ),
-        leadingWidth: w*0.18,
-        title: GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => Info(InfoList: newData),
+          leading:Padding(
+            padding: EdgeInsets.only(right: w*0.04),
+            child: Container(
+              width: w*0.12,
+              height: w*0.12,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                image: DecorationImage(image: AssetImage(
+                  'assets/images/customer_logo/clogo.jpg',
+                ),),
               ),
-            );
-          },
-          child: Text("مرحبا أ/ ${newData[0]["PersonName"]} ",
-              textDirection: TextDirection.rtl,
-              style: TextStyle(
-                fontSize: 20,
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'GE SS Two',
-              )),
-        ),
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(right: w * 0.05),
-            child: CircleAvatar(
-              backgroundColor: Colors.green.withOpacity(0.8),
-              radius: w * 0.06,
-              child: Center(
-                child: Text(
-                  '${newData[0]["PersonName"].toString().split(' ')[0].split('')[0]}',
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
+            ),
+          ),
+          leadingWidth: w*0.18,
+          title: GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => Info(InfoList: newData),
                 ),
+              );
+            },
+            child: Text("مرحبا أ/ ${newData[0]["PersonName"]} ",
+                textDirection: TextDirection.rtl,
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'GE SS Two',
+                )),
+          ),
+          actions: [
+            Padding(
+              padding: EdgeInsets.only(left: w * 0.05),
+              child: IconButton(
+                onPressed: (){},
+                icon: Image.asset('assets/images/logout.png'),
               ),
             ),
-          ),
-        ],
-        centerTitle: true,
-      ),
-      body: Container(
-        /*decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.center,
-            end: Alignment.bottomCenter,
-            colors: [Colors.white, Colors.blueGrey],
-          ),
-        ),*/
-        padding: EdgeInsets.symmetric(horizontal: w * 0.02),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Column(
+          ],
+          centerTitle: true,
+        ),
+        body: Container(
+          /*decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.center,
+              end: Alignment.bottomCenter,
+              colors: [Colors.white, Colors.blueGrey],
+            ),
+          ),*/
+          padding: EdgeInsets.symmetric(horizontal: w * 0.02),
+          height: double.infinity,
+          child: SingleChildScrollView(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: MainAxisSize.max,
               children: [
                 SizedBox(height: w * 0.02),
                 Text(
@@ -642,25 +632,26 @@ class _LoginState extends State<Login> {
                     ),
                   ],
                 ),
+                SizedBox(height: w * 0.07),
+                InkWell(
+                  onTap:() {
+                    _launchUrl('dynamics-system.com');
+                  },
+                  child: Image.asset(
+                    'assets/images/full_logo.png',
+                    fit: BoxFit.contain,
+                    width: w*0.2,
+                    height: w*0.17,
+                  ),
+                ),
               ],
             ),
-            InkWell(
-              onTap:() {
-                _launchUrl('dynamics-system.com');
-              },
-              child: Image.asset(
-                'assets/images/full_logo.png',
-                fit: BoxFit.contain,
-                width: w*0.2,
-                height: w*0.17,
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
   }
-
+  //external web site
   Future<void> _launchUrl(String url) async {
     final Uri uri = Uri(scheme: 'http', host: url);
     if (!await launchUrl(uri,mode: LaunchMode.externalApplication)) {

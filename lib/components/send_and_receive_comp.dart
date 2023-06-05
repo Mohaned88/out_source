@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
 class SendAndReceiveComp extends StatelessWidget {
@@ -20,7 +21,7 @@ class SendAndReceiveComp extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height:w * 0.35,
+        height:w * 0.36,
         width: w * 0.23,
         padding: EdgeInsets.symmetric(vertical: w*0.03),
         decoration: BoxDecoration(
@@ -42,22 +43,34 @@ class SendAndReceiveComp extends StatelessWidget {
               ),
               child: Image.asset(
                 imagePath ?? 'assets/images/upload_icon.png',
-                width: 0.1,
-                height: 0.1,
+                width: w*0.1,
+                height: w*0.1,
                 color: color,
                 fit: BoxFit.contain,
               ),
             ),
-            Text(
+
+            AutoSizeText(
               text ?? '...',
-              maxLines: 2,
-              textDirection: TextDirection.rtl,
               textAlign: TextAlign.center,
+              textDirection: TextDirection.rtl,
+              maxLines: 2,
               style: TextStyle(
-                  fontSize: w * 0.037,
-                  color: color,
-                  fontFamily: 'GE SS Two',
+                fontSize: 15,
+                color: color,
+                fontFamily: 'GE SS Two',
               ),
+              /*child: Text(
+                text ?? '...',
+                maxLines: 2,
+                textDirection: TextDirection.rtl,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: w * 0.037,
+                    color: color,
+                    fontFamily: 'GE SS Two',
+                ),
+              ),*/
             ),
           ],
         ),
