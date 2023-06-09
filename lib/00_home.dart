@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:dy_app/billShows.dart';
 import 'package:dy_app/components/send_and_receive_comp.dart';
 import 'package:dy_app/databasehelper.dart';
+import 'package:dy_app/register.dart';
 import 'package:dy_app/resources/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -170,482 +171,485 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-          backgroundColor: AppColors.mainColor,
-          toolbarHeight: w * 0.2,
-          automaticallyImplyLeading: false,
-          scrolledUnderElevation: 10,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-              bottomRight: Radius.circular(w * 0.1),
-              bottomLeft: Radius.circular(w * 0.1),
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        backgroundColor: AppColors.mainColor,
+        toolbarHeight: w * 0.2,
+        automaticallyImplyLeading: false,
+        scrolledUnderElevation: 10,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            bottomRight: Radius.circular(w * 0.1),
+            bottomLeft: Radius.circular(w * 0.1),
+          ),
+        ),
+        leading:Padding(
+          padding: EdgeInsets.only(left: w*0.04),
+          child: Container(
+            width: w*0.12,
+            height: w*0.12,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              image: DecorationImage(image: AssetImage(
+                'assets/images/customer_logo/clogo.jpg',
+              ),),
             ),
           ),
-          leading:Padding(
-            padding: EdgeInsets.only(right: w*0.04),
-            child: Container(
-              width: w*0.12,
-              height: w*0.12,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                image: DecorationImage(image: AssetImage(
-                  'assets/images/customer_logo/clogo.jpg',
-                ),),
+        ),
+        leadingWidth: w*0.18,
+        title: GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => Info(InfoList: newData),
               ),
+            );
+          },
+          child: Text("مرحبا أ/ ${newData[0]["PersonName"]} ",
+              textDirection: TextDirection.rtl,
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'GE SS Two',
+              ),
+          ),
+        ),
+        actions: [
+          Padding(
+            padding: EdgeInsets.only(right: w * 0.05),
+            child: IconButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_)=> const Reg(),
+                  ),
+                );
+              },
+              icon: Image.asset(
+                'assets/images/logout.png',
+                color: Colors.white,
+              ),
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
             ),
           ),
-          leadingWidth: w*0.18,
-          title: GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => Info(InfoList: newData),
-                ),
-              );
-            },
-            child: Text("مرحبا أ/ ${newData[0]["PersonName"]} ",
+        ],
+        centerTitle: true,
+      ),
+      body: Container(
+        padding: EdgeInsets.symmetric(horizontal: w * 0.02),
+        height: double.infinity,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              SizedBox(height: w * 0.02),
+              Text(
+                "التحديثات",
                 textDirection: TextDirection.rtl,
                 style: TextStyle(
                   fontSize: 20,
-                  color: Colors.white,
+                  color: Colors.black,
                   fontWeight: FontWeight.bold,
                   fontFamily: 'GE SS Two',
-                )),
-          ),
-          actions: [
-            Padding(
-              padding: EdgeInsets.only(left: w * 0.05),
-              child: IconButton(
-                onPressed: (){},
-                icon: Image.asset('assets/images/logout.png'),
-              ),
-            ),
-          ],
-          centerTitle: true,
-        ),
-        body: Container(
-          /*decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.center,
-              end: Alignment.bottomCenter,
-              colors: [Colors.white, Colors.blueGrey],
-            ),
-          ),*/
-          padding: EdgeInsets.symmetric(horizontal: w * 0.02),
-          height: double.infinity,
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                SizedBox(height: w * 0.02),
-                Text(
-                  "التحديثات",
-                  textDirection: TextDirection.rtl,
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'GE SS Two',
-                  ),
                 ),
-                SizedBox(height: w * 0.02),
-                SizedBox(
-                  width: double.infinity,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SendAndReceiveComp(
-                        color: Colors.amber,
-                        imagePath: 'assets/images/transaction_icon.png',
-                        text: 'ارسال المعاملات',
-                        onTap: () async {
-                          await SyncronizationData.isInternet().then(
-                            (connection) {
-                              if (connection) {
-                                //syncToMysql();
-                                syncToMysqlBillsDet();
-                                syncToMysqlBills();
-
-                                print("Internet connection available");
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text("No Internet"),
-                                  ),
-                                );
-                              }
-                            },
-                          );
-                        },
-                      ),
-                      SendAndReceiveComp(
-                        color: Colors.green,
-                        imagePath: 'assets/images/supplies_icon.png',
-                        text: 'ارسال التوريدات',
-                        onTap: () async {
-                          await SyncronizationData.isInternet().then((connection) {
+              ),
+              SizedBox(height: w * 0.02),
+              SizedBox(
+                width: double.infinity,
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SendAndReceiveComp(
+                      color: Colors.amber,
+                      imagePath: 'assets/images/transaction_icon.png',
+                      text: 'ارسال المعاملات',
+                      onTap: () async {
+                        await SyncronizationData.isInternet().then(
+                          (connection) {
                             if (connection) {
-                              syncToMysqlCash();
-                              syncToMysqlCashDet();
+                              //syncToMysql();
+                              syncToMysqlBillsDet();
+                              syncToMysqlBills();
 
                               print("Internet connection available");
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text("No Internet")));
+                                SnackBar(
+                                  content: Text("No Internet"),
+                                ),
+                              );
                             }
-                          });
-                        },
-                      ),
-                      SendAndReceiveComp(
-                        color: Colors.red,
-                        imagePath: 'assets/images/file_download_icon.png',
-                        text: 'استقبال الحسابات',
-                        onTap: () {
-                          fetchSyncTVData();
-                        },
-                      ),
-                      SendAndReceiveComp(
-                        color: Colors.blue,
-                        imagePath: 'assets/images/category_download_icon.png',
-                        text: 'استقبال الأصناف',
-                        onTap: () {
-                          fetchSyncItemsData();
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: w * 0.02),
-                Text(
-                  "الخدمات",
-                  textDirection: TextDirection.rtl,
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'GE SS Two',
-                  ),
-                ),
-                SizedBox(height: w * 0.01),
-                GridView.count(
-                  shrinkWrap: true,
-                  crossAxisCount: 3,
-                  childAspectRatio: 9 / 10,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(2.0),
-                      child: GestureDetector(
-                        onTap: () async {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const Bill()));
-                        },
-                        child: Container(
-                          //decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                width: w * 0.17,
-                                height: w * 0.17,
-                                padding: EdgeInsets.all(w * 0.02),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.blueGrey.withOpacity(0.2),
-                                ),
-                                child: Image.asset(
-                                  'assets/images/new/1.jpg',
-                                  width: 0.1,
-                                  height: 0.1,
-                                  color: Colors.indigo,
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                              Text(
-                                "فواتير \n البيع",
-                                textDirection: TextDirection.rtl,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'GE SS Two',
-                                ),
-                              ),
-                            ],
-                          ),
-                          //color: Colors.white,
-                        ),
-                      ),
+                          },
+                        );
+                      },
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(2.0),
-                      child: GestureDetector(
-                        onTap: () async {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const BillShows()));
-                        },
-                        child: Container(
-                          //decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                width: w * 0.17,
-                                height: w * 0.17,
-                                padding: EdgeInsets.all(w * 0.02),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.blueGrey.withOpacity(0.2),
-                                ),
-                                child: Image.asset(
-                                  'assets/images/new/bill2.jpg',
-                                  width: 0.1,
-                                  height: 0.1,
-                                  color: Colors.indigo,
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                              Text(
-                                "استعراض \n الفواتير",
-                                textDirection: TextDirection.rtl,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  overflow: TextOverflow.ellipsis,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'GE SS Two',
-                                ),
-                              ),
-                            ],
-                          ),
-                          //color: Colors.white,
-                        ),
-                      ),
+                    SendAndReceiveComp(
+                      color: Colors.green,
+                      imagePath: 'assets/images/supplies_icon.png',
+                      text: 'ارسال التوريدات',
+                      onTap: () async {
+                        await SyncronizationData.isInternet().then((connection) {
+                          if (connection) {
+                            syncToMysqlCash();
+                            syncToMysqlCashDet();
+
+                            print("Internet connection available");
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text("No Internet")));
+                          }
+                        });
+                      },
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(2.0),
-                      child: GestureDetector(
-                        onTap: () async {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const CashIn()));
-                        },
-                        child: Container(
-                          // decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                width: w * 0.17,
-                                height: w * 0.17,
-                                padding: EdgeInsets.all(w * 0.02),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.blueGrey.withOpacity(0.2),
-                                ),
-                                child: Image.asset(
-                                  'assets/images/new/cash.jpg',
-                                  width: 0.1,
-                                  height: 0.1,
-                                  color: Colors.indigo,
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                              Text(
-                                "توريدات \n نقديه",
-                                textDirection: TextDirection.rtl,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'GE SS Two',
-                                ),
-                              ),
-                            ],
-                          ),
-                          //color: Colors.white,
-                        ),
-                      ),
+                    SendAndReceiveComp(
+                      color: Colors.red,
+                      imagePath: 'assets/images/file_download_icon.png',
+                      text: 'استقبال الحسابات',
+                      onTap: () {
+                        fetchSyncTVData();
+                      },
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(2.0),
-                      child: GestureDetector(
-                        onTap: () async {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const Reports()));
-                        },
-                        child: Container(
-                          // decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                width: w * 0.17,
-                                height: w * 0.17,
-                                padding: EdgeInsets.all(w * 0.02),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.blueGrey.withOpacity(0.2),
-                                ),
-                                child: Image.asset(
-                                  'assets/images/new/report.jpg',
-                                  width: 0.1,
-                                  height: 0.1,
-                                  color: Colors.indigo,
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                              Text(
-                                "تقارير \n ",
-                                textDirection: TextDirection.rtl,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'GE SS Two',
-                                ),
-                              ),
-                            ],
-                          ),
-                          //color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: GestureDetector(
-                        onTap: () async {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const Results()));
-                        },
-                        child: Container(
-                          // decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                width: w * 0.17,
-                                height: w * 0.17,
-                                padding: EdgeInsets.all(w * 0.02),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.blueGrey.withOpacity(0.2),
-                                ),
-                                child: Image.asset(
-                                  'assets/images/new/target.jpg',
-                                  width: 0.1,
-                                  height: 0.1,
-                                  color: Colors.indigo,
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                              Text(
-                                "مستهدف \n المندوب",
-                                textDirection: TextDirection.rtl,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'GE SS Two',
-                                ),
-                              ),
-                            ],
-                          ),
-                          //color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: GestureDetector(
-                        onTap: () async {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const dailySafeDate()));
-                        },
-                        child: Container(
-                          // decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                width: w * 0.17,
-                                height: w * 0.17,
-                                padding: EdgeInsets.all(w * 0.02),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.blueGrey.withOpacity(0.2),
-                                ),
-                                child: Image.asset(
-                                  'assets/images/new/pay.jpg',
-                                  width: 0.1,
-                                  height: 0.1,
-                                  color: Colors.indigo,
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                              Text(
-                                "تحصيلات \n اليوم ",
-                                textDirection: TextDirection.rtl,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'GE SS Two',
-                                ),
-                              ),
-                            ],
-                          ),
-                          //color: Colors.white,
-                        ),
-                      ),
+                    SendAndReceiveComp(
+                      color: Colors.blue,
+                      imagePath: 'assets/images/category_download_icon.png',
+                      text: 'استقبال الأصناف',
+                      onTap: () {
+                        fetchSyncItemsData();
+                      },
                     ),
                   ],
                 ),
-                SizedBox(height: w * 0.07),
-                InkWell(
-                  onTap:() {
-                    _launchUrl('dynamics-system.com');
-                  },
-                  child: Image.asset(
-                    'assets/images/full_logo.png',
-                    fit: BoxFit.contain,
-                    width: w*0.2,
-                    height: w*0.17,
-                  ),
+              ),
+              SizedBox(height: w * 0.02),
+              Text(
+                "الخدمات",
+                textDirection: TextDirection.rtl,
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'GE SS Two',
                 ),
-              ],
-            ),
+              ),
+              SizedBox(height: w * 0.01),
+              GridView.count(
+                shrinkWrap: true,
+                crossAxisCount: 3,
+                childAspectRatio: 9 / 10,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(2.0),
+                    child: GestureDetector(
+                      onTap: () async {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const Bill()));
+                      },
+                      child: Container(
+                        //decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: w * 0.17,
+                              height: w * 0.17,
+                              padding: EdgeInsets.all(w * 0.02),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.blueGrey.withOpacity(0.2),
+                              ),
+                              child: Image.asset(
+                                'assets/images/new/1.jpg',
+                                width: 0.1,
+                                height: 0.1,
+                                color: Colors.indigo,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                            Text(
+                              "فواتير \n البيع",
+                              textDirection: TextDirection.rtl,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'GE SS Two',
+                              ),
+                            ),
+                          ],
+                        ),
+                        //color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(2.0),
+                    child: GestureDetector(
+                      onTap: () async {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const BillShows()));
+                      },
+                      child: Container(
+                        //decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: w * 0.17,
+                              height: w * 0.17,
+                              padding: EdgeInsets.all(w * 0.02),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.blueGrey.withOpacity(0.2),
+                              ),
+                              child: Image.asset(
+                                'assets/images/new/bill2.jpg',
+                                width: 0.1,
+                                height: 0.1,
+                                color: Colors.indigo,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                            Text(
+                              "استعراض \n الفواتير",
+                              textDirection: TextDirection.rtl,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 13,
+                                overflow: TextOverflow.ellipsis,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'GE SS Two',
+                              ),
+                            ),
+                          ],
+                        ),
+                        //color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(2.0),
+                    child: GestureDetector(
+                      onTap: () async {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const CashIn()));
+                      },
+                      child: Container(
+                        // decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: w * 0.17,
+                              height: w * 0.17,
+                              padding: EdgeInsets.all(w * 0.02),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.blueGrey.withOpacity(0.2),
+                              ),
+                              child: Image.asset(
+                                'assets/images/new/cash.jpg',
+                                width: 0.1,
+                                height: 0.1,
+                                color: Colors.indigo,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                            Text(
+                              "توريدات \n نقديه",
+                              textDirection: TextDirection.rtl,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'GE SS Two',
+                              ),
+                            ),
+                          ],
+                        ),
+                        //color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(2.0),
+                    child: GestureDetector(
+                      onTap: () async {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const Reports()));
+                      },
+                      child: Container(
+                        // decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: w * 0.17,
+                              height: w * 0.17,
+                              padding: EdgeInsets.all(w * 0.02),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.blueGrey.withOpacity(0.2),
+                              ),
+                              child: Image.asset(
+                                'assets/images/new/report.jpg',
+                                width: 0.1,
+                                height: 0.1,
+                                color: Colors.indigo,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                            Text(
+                              "تقارير \n ",
+                              textDirection: TextDirection.rtl,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'GE SS Two',
+                              ),
+                            ),
+                          ],
+                        ),
+                        //color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: GestureDetector(
+                      onTap: () async {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const Results()));
+                      },
+                      child: Container(
+                        // decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: w * 0.17,
+                              height: w * 0.17,
+                              padding: EdgeInsets.all(w * 0.02),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.blueGrey.withOpacity(0.2),
+                              ),
+                              child: Image.asset(
+                                'assets/images/new/target.jpg',
+                                width: 0.1,
+                                height: 0.1,
+                                color: Colors.indigo,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                            Text(
+                              "مستهدف \n المندوب",
+                              textDirection: TextDirection.rtl,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'GE SS Two',
+                              ),
+                            ),
+                          ],
+                        ),
+                        //color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: GestureDetector(
+                      onTap: () async {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const dailySafeDate()));
+                      },
+                      child: Container(
+                        // decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: w * 0.17,
+                              height: w * 0.17,
+                              padding: EdgeInsets.all(w * 0.02),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.blueGrey.withOpacity(0.2),
+                              ),
+                              child: Image.asset(
+                                'assets/images/new/pay.jpg',
+                                width: 0.1,
+                                height: 0.1,
+                                color: Colors.indigo,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                            Text(
+                              "تحصيلات \n اليوم ",
+                              textDirection: TextDirection.rtl,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'GE SS Two',
+                              ),
+                            ),
+                          ],
+                        ),
+                        //color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: w * 0.07),
+              InkWell(
+                onTap:() {
+                  _launchUrl('dynamics-system.com');
+                },
+                child: Image.asset(
+                  'assets/images/full_logo.png',
+                  fit: BoxFit.contain,
+                  width: w*0.2,
+                  height: w*0.17,
+                ),
+              ),
+            ],
           ),
         ),
       ),

@@ -56,7 +56,7 @@ class SendAndReceiveComp extends StatelessWidget {
               textDirection: TextDirection.rtl,
               maxLines: 2,
               style: TextStyle(
-                fontSize: 15,
+                fontSize: w * 0.037,
                 color: color,
                 fontFamily: 'GE SS Two',
               ),
