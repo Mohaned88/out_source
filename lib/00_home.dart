@@ -39,6 +39,9 @@ class _LoginState extends State<Login> {
       EasyLoading.show(status: 'Don`t close app. we are sync...');
       await SyncronizationData().saveToMysqlBillsWith(billList);
       EasyLoading.showSuccess('Successfully save to mysql');
+      setState(() {
+        _isButtonDisabledBill = false;
+      });
     });
   }
 
@@ -47,6 +50,7 @@ class _LoginState extends State<Login> {
       EasyLoading.show(status: 'Don`t close app. we are sync...');
       await SyncronizationData().saveToMysqlBillDetWith(billDetList);
       EasyLoading.showSuccess('Successfully save to mysql');
+
     });
   }
 
@@ -63,6 +67,9 @@ class _LoginState extends State<Login> {
       EasyLoading.show(status: 'من فضلك لا تغلق التطبيق جاري رفع البيانات');
       await SyncronizationData().saveToMysqlCashDetWith(billList);
       EasyLoading.showSuccess('تم ارسال التوريدات الي الاون لاين');
+      setState(() {
+        _isButtonDisabledCash = false;
+      });
     });
   }
 
@@ -78,6 +85,92 @@ class _LoginState extends State<Login> {
     });
   }
 
+  ////////////////10-6-2023
+
+  bool _isButtonDisabledItem = false;
+  bool _isButtonDisabledTV = false;
+  bool _isButtonDisabledCash = false;
+  bool _isButtonDisabledBill = false;
+
+  void _handleButtonTapItem() {
+    if (!_isButtonDisabledItem) {
+      setState(() {
+        _isButtonDisabledItem = true;
+      });
+      fetchSyncItemsData();
+      /*Future.delayed(Duration(seconds: 5), () {
+        setState(() {
+          _isButtonDisabledItem = false;
+        });
+      });*/
+    }
+  }
+
+
+  void _handleButtonTapTV() {
+    if (!_isButtonDisabledTV) {
+      setState(() {
+        _isButtonDisabledTV = true;
+      });
+      fetchSyncTVData();
+     /* Future.delayed(Duration(seconds: 5), () {
+        setState(() {
+          _isButtonDisabledTV = false;
+        });
+      });*/
+    }
+  }
+
+  void _handleButtonTapCash() async {
+    if (!_isButtonDisabledCash) {
+      setState(() {
+        _isButtonDisabledCash = true;
+      });
+      await SyncronizationData.isInternet().then((connection) {
+        if (connection) {
+          syncToMysqlCash();
+          syncToMysqlCashDet();
+
+          print("Internet connection available");
+        } else {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text("No Internet")));
+        }
+      });
+      /*Future.delayed(Duration(seconds: 5), () {
+        setState(() {
+          _isButtonDisabledCash = false;
+        });
+      });*/
+    }
+  }
+
+  void _handleButtonTapBill() async {
+    if (!_isButtonDisabledBill) {
+      setState(() {
+        _isButtonDisabledBill = true;
+      });
+      await SyncronizationData.isInternet().then((connection) {
+        if (connection) {
+          syncToMysqlBillsDet();
+          syncToMysqlBills();
+
+          print("Internet connection available");
+        } else {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text("No Internet")));
+        }
+      });
+      /*Future.delayed(Duration(seconds: 5), () {
+        setState(() {
+          _isButtonDisabledBill = false;
+        });
+      });*/
+    }
+  }
+
+  ////////////////////////////
+
   Future fetchSyncItemsData() async {
     var dbclient = await conn.db;
     List itemList = [];
@@ -92,17 +185,34 @@ class _LoginState extends State<Login> {
           EasyLoading.show(status: 'من فضلك لا تغلق التطبيق حتي يتم التحديث');
           await SyncronizationData().GetAllItemsAndSaveSQlite();
           EasyLoading.showSuccess('تم التحديث !!  ');
-        });
-      } else {
-        dbclient.rawQuery("delete from items").then((value) {
-          SyncronizationData().GetAllItemsAndSaveSQlite().then((_) async {
-            EasyLoading.show(status: 'من فضلك لا تغلق التطبيق حتي يتم التحديث')
-                .then((value) => SyncronizationData()
-                    .GetAllItemsAndSaveSQlite()
-                    .then(
-                        (value) => EasyLoading.showSuccess('تم التحديث !!  ')));
+          setState(() {
+            _isButtonDisabledItem = false;
           });
         });
+      } else {
+        dbclient.rawQuery("delete from items").then(
+          (value) {
+            SyncronizationData().GetAllItemsAndSaveSQlite().then(
+              (_) async {
+                EasyLoading.show(
+                        status: 'من فضلك لا تغلق التطبيق حتي يتم التحديث')
+                    .then(
+                  (value) =>
+                      SyncronizationData().GetAllItemsAndSaveSQlite().then(
+                    (value) {
+                      EasyLoading.showSuccess('تم التحديث !!  ');
+                      setState(
+                        () {
+                          _isButtonDisabledItem = false;
+                        },
+                      );
+                    },
+                  ),
+                );
+              },
+            );
+          },
+        );
       }
     } catch (e) {
       print(e.toString());
@@ -129,6 +239,9 @@ class _LoginState extends State<Login> {
               'من فضلك لا تغلق التطبيق حتي يتم التحديث قد يستغرق بعض الوقت');
           await SyncronizationData().GetAllItemsAndSaveSQlite();
           EasyLoading.showSuccess('تم التحديث !!  ');
+          setState(() {
+            _isButtonDisabledTV = false;
+          });
         });
       } else {
         dbclient.rawQuery("delete from Organizations").then((value) {
@@ -137,7 +250,12 @@ class _LoginState extends State<Login> {
                     'من فضلك لا تغلق التطبيق حتي يتم التحديث قد يستغرق بعض الوقت')
                 .then(
                     (value) => SyncronizationData().GetAllItemsAndSaveSQlite())
-                .then((value) => EasyLoading.showSuccess('تم التحديث !!  '));
+                .then((value){
+                  EasyLoading.showSuccess('تم التحديث !!  ');
+                  setState(() {
+                    _isButtonDisabledTV = false;
+                  });
+                });
           });
         });
       }
@@ -184,20 +302,22 @@ class _LoginState extends State<Login> {
             bottomLeft: Radius.circular(w * 0.1),
           ),
         ),
-        leading:Padding(
-          padding: EdgeInsets.only(left: w*0.04),
+        leading: Padding(
+          padding: EdgeInsets.only(left: w * 0.04),
           child: Container(
-            width: w*0.12,
-            height: w*0.12,
+            width: w * 0.12,
+            height: w * 0.12,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              image: DecorationImage(image: AssetImage(
-                'assets/images/customer_logo/clogo.jpg',
-              ),),
+              image: DecorationImage(
+                image: AssetImage(
+                  'assets/images/customer_logo/clogo.jpg',
+                ),
+              ),
             ),
           ),
         ),
-        leadingWidth: w*0.18,
+        leadingWidth: w * 0.18,
         title: GestureDetector(
           onTap: () {
             Navigator.push(
@@ -207,14 +327,15 @@ class _LoginState extends State<Login> {
               ),
             );
           },
-          child: Text("مرحبا أ/ ${newData[0]["PersonName"]} ",
-              textDirection: TextDirection.rtl,
-              style: TextStyle(
-                fontSize: 20,
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'GE SS Two',
-              ),
+          child: Text(
+            "مرحبا أ/ ${newData[0]["Username"]} ",
+            textDirection: TextDirection.rtl,
+            style: TextStyle(
+              fontSize: 20,
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'GE SS Two',
+            ),
           ),
         ),
         actions: [
@@ -225,7 +346,7 @@ class _LoginState extends State<Login> {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (_)=> const Reg(),
+                    builder: (_) => const Reg(),
                   ),
                 );
               },
@@ -272,60 +393,41 @@ class _LoginState extends State<Login> {
                       color: Colors.amber,
                       imagePath: 'assets/images/transaction_icon.png',
                       text: 'ارسال المعاملات',
+                      status: _isButtonDisabledBill,
                       onTap: () async {
-                        await SyncronizationData.isInternet().then(
-                          (connection) {
-                            if (connection) {
-                              //syncToMysql();
-                              syncToMysqlBillsDet();
-                              syncToMysqlBills();
-
-                              print("Internet connection available");
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text("No Internet"),
-                                ),
-                              );
-                            }
-                          },
-                        );
+                        _handleButtonTapBill();
                       },
                     ),
                     SendAndReceiveComp(
                       color: Colors.green,
                       imagePath: 'assets/images/supplies_icon.png',
                       text: 'ارسال التوريدات',
-                      onTap: () async {
-                        await SyncronizationData.isInternet().then((connection) {
-                          if (connection) {
-                            syncToMysqlCash();
-                            syncToMysqlCashDet();
-
-                            print("Internet connection available");
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text("No Internet")));
-                          }
-                        });
+                      status: _isButtonDisabledCash,
+                      onTap: (){
+                        _handleButtonTapCash();
                       },
                     ),
+
                     SendAndReceiveComp(
                       color: Colors.red,
                       imagePath: 'assets/images/file_download_icon.png',
                       text: 'استقبال الحسابات',
+                      status: _isButtonDisabledTV,
                       onTap: () {
+                        _handleButtonTapTV();
                         fetchSyncTVData();
                       },
                     ),
                     SendAndReceiveComp(
-                      color: Colors.blue,
-                      imagePath: 'assets/images/category_download_icon.png',
-                      text: 'استقبال الأصناف',
-                      onTap: () {
-                        fetchSyncItemsData();
-                      },
-                    ),
+                            color: Colors.blue,
+                            imagePath:
+                                'assets/images/category_download_icon.png',
+                            text: 'استقبال الأصناف',
+                            onTap: () {
+                              _handleButtonTapItem();
+                            },
+                          status: _isButtonDisabledItem,
+                          ),
                   ],
                 ),
               ),
@@ -637,29 +739,662 @@ class _LoginState extends State<Login> {
                   ),
                 ],
               ),
-              SizedBox(height: w * 0.07),
+              SizedBox(height: w * 0.03),
               InkWell(
-                onTap:() {
+                onTap: () {
                   _launchUrl('dynamics-system.com');
                 },
                 child: Image.asset(
                   'assets/images/full_logo.png',
                   fit: BoxFit.contain,
-                  width: w*0.2,
-                  height: w*0.17,
+                  width: w * 0.2,
+                  height: w * 0.17,
                 ),
               ),
+              Center(child: Text("Update 11-6-2023" ,style: TextStyle(fontSize: 10,),),),
             ],
           ),
         ),
       ),
     );
   }
+
   //external web site
   Future<void> _launchUrl(String url) async {
     final Uri uri = Uri(scheme: 'http', host: url);
-    if (!await launchUrl(uri,mode: LaunchMode.externalApplication)) {
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
       throw Exception('Could not launch $uri');
     }
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+
+///10-6-2023
+import 'dart:async';
+import 'dart:convert';
+import 'package:dy_app/billShows.dart';
+import 'package:dy_app/databasehelper.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import '01_mandoub_info.dart';
+import 'DailySafeDate.dart';
+import 'bill.dart';
+import 'cashIn.dart';
+import 'dailySafe.dart';
+
+import 'Reps/reports.dart';
+import 'results.dart';
+import 'syncronize.dart';
+
+// ignore: must_be_immutable
+class Login extends StatefulWidget {
+  Login({Key? key, required this.value, required this.personid})
+      : super(key: key);
+  String value;
+  int personid;
+
+  @override
+  State<Login> createState() => _LoginState();
+}
+
+class _LoginState extends State<Login> {
+  final conn = SqfliteDatabaseHelper.instance;
+  Timer? _timer;
+  String? Code;
+
+  Future syncToMysqlBills() async {
+    await SyncronizationData().fetchAllBills().then((billList) async {
+      EasyLoading.show(status: 'Don`t close app. we are sync...');
+      await SyncronizationData().saveToMysqlBillsWith(billList);
+      EasyLoading.showSuccess('Successfully save to mysql');
+    });
+  }
+
+  Future syncToMysqlBillsDet() async {
+    await SyncronizationData().fetchAllBillsDet().then((billDetList) async {
+      EasyLoading.show(status: 'Don`t close app. we are sync...');
+      await SyncronizationData().saveToMysqlBillDetWith(billDetList);
+      EasyLoading.showSuccess('Successfully save to mysql');
+    });
+  }
+
+
+  Future syncToMysqlCash() async {
+    await SyncronizationData().fetchAllCashIns().then((cashList) async {
+      EasyLoading.show(status: 'من فضلك لا تغلق التطبيق جاري رفع البيانات');
+      await SyncronizationData().saveToMysqlCashWith(cashList);
+      EasyLoading.showSuccess('تم ارسال التوريدات الي الاون لاين');
+    });
+  }
+
+  Future syncToMysqlCashDet() async {
+    await SyncronizationData().fetchAllCashInDet().then((billList) async {
+      EasyLoading.show(status: 'من فضلك لا تغلق التطبيق جاري رفع البيانات');
+      await SyncronizationData().saveToMysqlCashDetWith(billList);
+      EasyLoading.showSuccess('تم ارسال التوريدات الي الاون لاين');
+    });
+  }
+
+
+
+  Future isInteret() async {
+    await SyncronizationData.isInternet().then((connection) {
+      if (connection) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Internet connection available")));
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("No Internet")));
+      }
+    });
+  }
+////////////////10-6-2023
+
+  bool _isButtonDisabledItem = false;
+  bool _isButtonDisabledTV = false;
+  bool _isButtonDisabledCash = false;
+  bool _isButtonDisabledBill = false;
+
+  void _handleButtonTapItem() {
+    if (!_isButtonDisabledItem) {
+      setState(() {
+        _isButtonDisabledItem = true;
+      });
+      fetchSyncItemsData();
+      Future.delayed(Duration(seconds: 5), () {
+        setState(() {
+          _isButtonDisabledItem = false;
+        });
+      });
+    }
+  }
+
+  void _handleButtonTapTV() {
+    if (!_isButtonDisabledTV) {
+      setState(() {
+        _isButtonDisabledTV = true;
+      });
+      fetchSyncTVData();
+      Future.delayed(Duration(seconds: 5), () {
+        setState(() {
+          _isButtonDisabledTV = false;
+        });
+      });
+    }
+  }
+
+  void _handleButtonTapCash() async{
+    if (!_isButtonDisabledCash) {
+      setState(() {
+        _isButtonDisabledCash = true;
+      });
+      await SyncronizationData.isInternet().then((connection) {
+        if (connection) {
+
+          syncToMysqlCash();
+          syncToMysqlCashDet();
+
+          print("Internet connection available");
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("No Internet")));
+        }
+      });
+      Future.delayed(Duration(seconds: 5), () {
+        setState(() {
+          _isButtonDisabledCash = false;
+        });
+      });
+    }
+  }
+  void _handleButtonTapBill() async{
+    if (!_isButtonDisabledBill) {
+      setState(() {
+        _isButtonDisabledBill = true;
+      });
+      await SyncronizationData.isInternet().then((connection) {
+        if (connection) {
+
+          syncToMysqlBillsDet();
+          syncToMysqlBills();
+
+
+          print("Internet connection available");
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("No Internet")));
+        }
+      });
+      Future.delayed(Duration(seconds: 5), () {
+        setState(() {
+          _isButtonDisabledBill = false;
+        });
+      });
+    }
+  }
+  ////////////////////////////
+
+
+
+  Future fetchSyncItemsData() async {
+    var dbclient = await conn.db;
+    List itemList = [];
+    try {
+      List<Map<String, dynamic>> maps =
+      await dbclient.rawQuery('select * from Items');
+      for (var item in maps) {
+        itemList.add(item);
+      }
+      if (itemList.isEmpty) {
+        await SyncronizationData().GetAllItemsAndSaveSQlite().then((_) async {
+          EasyLoading.show(status: 'من فضلك لا تغلق التطبيق حتي يتم التحديث');
+          await SyncronizationData().GetAllItemsAndSaveSQlite();
+          EasyLoading.showSuccess('تم التحديث !!  ');
+        });
+      } else {
+        dbclient.rawQuery("delete from items").then((value) {
+          SyncronizationData().GetAllItemsAndSaveSQlite().then((_) async {
+            EasyLoading.show(status: 'من فضلك لا تغلق التطبيق حتي يتم التحديث')
+                .then((value) => SyncronizationData()
+                .GetAllItemsAndSaveSQlite()
+                .then(
+                    (value) => EasyLoading.showSuccess('تم التحديث !!  ')));
+          });
+        });
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    print("get items done");
+    print(itemList);
+    return itemList;
+  }
+
+  late List<dynamic> newData;
+  Future fetchSyncTVData() async {
+    var dbclient = await conn.db;
+    List itemList = [];
+    try {
+      List<Map<String, dynamic>> maps = await dbclient
+          .rawQuery('select * from Organizations  where Mandoub1 = "$Code"');
+      for (var item in maps) {
+        itemList.add(item);
+      }
+      if (itemList.isEmpty) {
+        await SyncronizationData().GetAllTVAndSaveSQlite(Code).then((_) async {
+          EasyLoading.showSuccess(
+              'من فضلك لا تغلق التطبيق حتي يتم التحديث قد يستغرق بعض الوقت');
+          await SyncronizationData().GetAllItemsAndSaveSQlite();
+          EasyLoading.showSuccess('تم التحديث !!  ');
+        });
+      } else {
+        dbclient.rawQuery("delete from Organizations").then((value) {
+          SyncronizationData().GetAllTVAndSaveSQlite(Code).then((_) async {
+            EasyLoading.showSuccess(
+                'من فضلك لا تغلق التطبيق حتي يتم التحديث قد يستغرق بعض الوقت')
+                .then(
+                    (value) => SyncronizationData().GetAllItemsAndSaveSQlite())
+                .then((value) => EasyLoading.showSuccess('تم التحديث !!  '));
+          });
+        });
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    print("get items done");
+    print(itemList);
+    return itemList;
+  }
+
+  @override
+  void initState() {
+    isInteret();
+    newData = (json.decode(widget.value));
+    print("in login");
+    print(newData[0]["PersonName"]);
+    Code = newData[0]["Mandoubtag"].toString();
+
+    print(Code);
+    EasyLoading.addStatusCallback((status) {
+      print('EasyLoading Status $status');
+      if (status == EasyLoadingStatus.dismiss) {
+        _timer?.cancel();
+      }
+    });
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.center,
+            end: Alignment.bottomCenter,
+            colors: [Colors.white, Colors.blueGrey],
+          ),),
+        child: ListView(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => Info(InfoList: newData)));
+                  },
+                  child: Text("مرحبا أ/ ${newData[0]["PersonName"]} ",
+                      textDirection: TextDirection.ltr,
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'GE SS Two',
+                      )),
+                ),
+              ],
+            ),
+            GestureDetector(
+              onTap: () async {},
+              child: Container(
+                width: MediaQuery.of(context).size.width * .2,
+                height: MediaQuery.of(context).size.height * .15,
+                child: Image.asset("assets/images/mand.jpg"),
+              ),
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * .05,
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  child: Text(
+                    "ارسال المعاملات الي الاون لاين  ",
+                    textDirection: TextDirection.rtl,
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'GE SS Two',
+                    ),
+                  ),
+                  ///10-6-2023
+                  onTap: _isButtonDisabledCash ? null : _handleButtonTapBill,
+                ),
+                GestureDetector(
+                  child: Text(
+                    "ارسال التوريدات الي الاون لاين  ",
+                    textDirection: TextDirection.rtl,
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'GE SS Two',
+                    ),
+                  ),
+                  ///10-6-2023
+                  onTap: _isButtonDisabledCash ? null : _handleButtonTapCash,
+                ),
+
+                Container(
+                  width: MediaQuery.of(context).size.width* .9,
+                  child: ElevatedButton(
+                    ///10-6-2023
+                    onPressed: _isButtonDisabledItem ? null : _handleButtonTapItem,
+                    child: Text(
+                      "تحديث واستقبال بيانات الاصناف الاون لاين ",
+                      textDirection: TextDirection.rtl,
+                      style: TextStyle(
+                        fontSize: 17,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'GE SS Two',
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width* .9,
+                  child: ElevatedButton(
+                    ///10-6-2023
+                    onPressed: _isButtonDisabledTV ? null : _handleButtonTapTV,
+                    child: Text(
+                      "تحديث واستقبال بيانات الدليل الاون لاين ",
+                      textDirection: TextDirection.rtl,
+                      style: TextStyle(
+                        fontSize: 17,
+                        color: Colors.green,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'GE SS Two',
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * .05,
+            ),
+            GridView.count(
+              shrinkWrap: true,
+              crossAxisCount: 2,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(2.0),
+                  child: GestureDetector(
+                    onTap: () async {
+
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => const Bill()));
+                    },
+                    child: Container(
+                      decoration:
+                      BoxDecoration(border: Border.all(color: Colors.grey)),
+                      child: Column(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(image: DecorationImage(fit: BoxFit.fill,image: AssetImage("assets/images/1.jpg"))),
+                            height: MediaQuery.of(context).size.height * .17,
+                          ),
+                          Text(
+                            "فواتير البيع",
+                            textDirection: TextDirection.rtl,
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'GE SS Two',
+                            ),
+                          ),
+                        ],
+                      ),
+                      //color: Colors.white,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(2.0),
+                  child: GestureDetector(
+                    onTap: () async {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const BillShows()));
+                    },
+                    child: Container(
+                      decoration:
+                      BoxDecoration(border: Border.all(color: Colors.grey)),
+                      child: Column(
+                        children: [
+                          Container(
+                            width: MediaQuery.of(context).size.width * .2,
+                            height: MediaQuery.of(context).size.height * .15,
+                            child: Image.asset("assets/images/bill.jpg"),
+                          ),
+                          Text(
+                            "استعراض الفواتير",
+                            textDirection: TextDirection.rtl,
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'GE SS Two',
+                            ),
+                          ),
+                        ],
+                      ),
+                      //color: Colors.white,
+                    ),
+
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(2.0),
+                  child: GestureDetector(
+                    onTap: () async {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const CashIn()));
+                    },
+                    child: Container(
+                      decoration:
+                      BoxDecoration(border: Border.all(color: Colors.grey)),
+                      child: Column(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(image: DecorationImage(fit: BoxFit.fill,image: AssetImage("assets/images/cash.jpg"))),
+                            height: MediaQuery.of(context).size.height * .17,
+
+                          ),
+                          Text(
+                            "توريدات نقديه",
+                            textDirection: TextDirection.rtl,
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'GE SS Two',
+                            ),
+                          ),
+                        ],
+                      ),
+                      //color: Colors.white,
+                    ),
+
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(2.0),
+                  child: GestureDetector(
+                    onTap: () async {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const Reports()));
+                    },
+                    child: Container(
+                      decoration:
+                      BoxDecoration(border: Border.all(color: Colors.grey)),
+                      child: Column(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(image: DecorationImage(fit: BoxFit.fill,image: AssetImage("assets/images/report.jpg"))),
+                            height: MediaQuery.of(context).size.height * .17,
+                          ),
+                          Text(
+                            "تقارير",
+                            textDirection: TextDirection.rtl,
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'GE SS Two',
+                            ),
+                          ),
+                        ],
+                      ),
+                      //color: Colors.white,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: GestureDetector(
+                    onTap: () async {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const Results()));
+                    },
+                    child: Container(
+                      decoration:
+                      BoxDecoration(border: Border.all(color: Colors.grey)),
+                      child: Column(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(image: DecorationImage(fit: BoxFit.fill,image: AssetImage("assets/images/target.jpg"))),
+                            height: MediaQuery.of(context).size.height * .17,
+                          ),
+                          Text(
+                            "مستهدف المندوب",
+                            textDirection: TextDirection.rtl,
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'GE SS Two',
+                            ),
+                          ),
+                        ],
+                      ),
+                      //color: Colors.white,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: GestureDetector(
+                    onTap: () async {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const dailySafeDate()));
+                    },
+                    child: Container(
+                      decoration:
+                      BoxDecoration(border: Border.all(color: Colors.grey)),
+                      child: Column(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(image: DecorationImage(fit: BoxFit.fill,image: AssetImage("assets/images/pay.jpg"))),
+                            height: MediaQuery.of(context).size.height * .17,
+
+                          ),
+                          Text(
+                            "تحصيلات اليوم ",
+                            textDirection: TextDirection.rtl,
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'GE SS Two',
+                            ),
+                          ),
+                        ],
+                      ),
+                      //color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Future syncUsersToSqlite() async {
+//   await SyncronizationData().GetAllUsersAndSaveSQlite().then((_) async {
+//     EasyLoading.show(status: 'Dont close app. we are sync...');
+//     await SyncronizationData().GetAllUsersAndSaveSQlite();
+//     EasyLoading.showSuccess('Successfully save to mysql');
+//   });
+// }
+
+// GestureDetector(
+//   onTap: (){
+//   syncUsersToSqlite();
+//    // SyncronizationData().GetAllAndSaveSQlite();
+//   },
+//   child: Container(
+//     child: Center(
+//       child: Text(
+//         "تحديث واستقبال بيانات  الاون لاين ",
+//         textDirection: TextDirection.rtl,
+//         style: TextStyle(
+//           fontSize: 24,
+//           fontWeight: FontWeight.bold,
+//           fontFamily: 'GE SS Two',
+//         ),
+//       ),
+//     ),
+//   ),
+//
+// ),
+
+*/

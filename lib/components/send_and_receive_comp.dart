@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flip_card/flip_card_controller.dart';
 import 'package:flutter/material.dart';
 
 class SendAndReceiveComp extends StatelessWidget {
@@ -6,27 +7,32 @@ class SendAndReceiveComp extends StatelessWidget {
   final String? imagePath;
   final String? text;
   final GestureTapCallback? onTap;
+  bool status;
 
-  const SendAndReceiveComp({
+
+  SendAndReceiveComp({
     Key? key,
     this.color,
     this.imagePath,
     this.text,
     this.onTap,
+    this.status = false,
   }) : super(key: key);
+
+
 
   @override
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
     return GestureDetector(
-      onTap: onTap,
+      onTap: status ? null : onTap,
       child: Container(
         height:w * 0.36,
         width: w * 0.23,
         padding: EdgeInsets.symmetric(vertical: w*0.03),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(w * 0.03),
-          color: color!.withOpacity(0.2),
+          color: status ? Colors.grey.withOpacity(0.2) : color!.withOpacity(0.2),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -45,7 +51,7 @@ class SendAndReceiveComp extends StatelessWidget {
                 imagePath ?? 'assets/images/upload_icon.png',
                 width: w*0.1,
                 height: w*0.1,
-                color: color,
+                color: status ? Colors.grey : color,
                 fit: BoxFit.contain,
               ),
             ),
@@ -57,7 +63,7 @@ class SendAndReceiveComp extends StatelessWidget {
               maxLines: 2,
               style: TextStyle(
                 fontSize: w * 0.037,
-                color: color,
+                color: status ? Colors.grey : color,
                 fontFamily: 'GE SS Two',
               ),
               /*child: Text(
