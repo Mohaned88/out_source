@@ -208,6 +208,8 @@ class _RegState extends State<Reg> {
                                               '${data![0]["PersonName"]}');
                                           await prefs.setString(
                                               'Password', '${data![0]["Password"]}');
+                                          await prefs.setString(
+                                              'mandoub_name', '${data![0]["Username"]}');
 
                                           print(
                                               "${data![0]["Mandoubtag"].toString()}");

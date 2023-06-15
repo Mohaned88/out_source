@@ -415,7 +415,7 @@ class _LoginState extends State<Login> {
                       status: _isButtonDisabledTV,
                       onTap: () {
                         _handleButtonTapTV();
-                        fetchSyncTVData();
+                       // fetchSyncTVData();
                       },
                     ),
                     SendAndReceiveComp(

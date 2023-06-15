@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 
 
 class GeneralSafeRepShow extends StatefulWidget {
-  GeneralSafeRepShow({Key ?key,required this.data}) : super(key: key);
-  List data;
+   GeneralSafeRepShow({Key ?key,required this.data}) : super(key: key);
+List data;
   @override
   State<GeneralSafeRepShow> createState() => _GeneralSafeRepShowState();
 }

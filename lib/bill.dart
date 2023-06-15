@@ -168,14 +168,9 @@ class _BillState extends State<Bill> {
                         ' VALUES($billid,$naqd,"$getDate","${_mySelection?.trim()}","$getDate",0,$id,$safe,$store,"$PayType",$tagx,"$sharh" ) ';
                     int x = await dbclient.rawInsert(sql);
                     print(x);
-                //     dbclient.rawQuery("""
-                // INSERT INTO sqlite_sequence (name,seq) SELECT 'billsDet', 666666 WHERE NOT EXISTS (SELECT changes() AS change FROM sqlite_sequence WHERE change <> 0);
-                //   """).then((value) =>
                        Navigator.push(context, MaterialPageRoute(builder: (context) => BillDetails(id: int.parse(billid),type_id:naqd ,)));
                   },
                   child: Icon(
-
-
                     Icons.add,
                     size: 34,
                   ))

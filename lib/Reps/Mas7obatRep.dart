@@ -1,15 +1,10 @@
-import 'dart:convert';
 import 'dart:typed_data';
-import 'package:dropdown_plus/dropdown_plus.dart';
 import 'package:flutter/services.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import '../databasehelper.dart';
+import 'package:flutter/material.dart';
 
 
 class Mas7obatRepShow extends StatefulWidget {
@@ -22,77 +17,15 @@ class Mas7obatRepShow extends StatefulWidget {
 
 class _Mas7obatRepShowState extends State<Mas7obatRepShow> {
   List data = [];
-  String? _mySelection1;
-  final conn = SqfliteDatabaseHelper.instance;
-  double? tag;
-  String? _mySelection;
-/*  Future<List<dynamic>> get() async {
-    return data;
-  }*/
-
-  Future GetAllMas7obatData() async {
-    final prefs = await SharedPreferences.getInstance();
-    double?  tag  = prefs.getDouble("tag");
-    int  ? tagx    = tag?.toInt();
-    final String url = "http://sales2563.dynamicsdb2.com/api/Mas7obat/$_mySelection1";
-    var response =
-    await http.get(Uri.parse(url), headers: {"Accept": "application/json"});
-    if (response.statusCode == 200) {
-      print("Saving Data ");
-      print(response.body);
-    }
-    else {
-      print(response.statusCode);
-    }
-
-    List jsonResponse = jsonDecode(response.body);
-
-    print("get Report");
-    print(jsonResponse);
-
-    return jsonResponse;
-  }
-
-  Future getSWData() async {
-    List ff = [];
-
-    final prefs = await SharedPreferences.getInstance();
-    var dbclient = await conn.db;
-    int? tagx;
-    tag  = prefs.getDouble("tag");
-    tagx    = tag?.toInt();
-    print("$tagx");
-    List<Map<String, dynamic>> maps =
-    await dbclient.rawQuery("select * from Organizations where Mandoub1 = $tagx order by orgName ASC");
-    for (var item in maps) {
-      ff.add(item);
-    }
-    print("TV get");
-    print(ff);
-    setState(() {
-      data = ff;
-
-      _mySelection = data[0]["org_ID"].toString();
-      _mySelection1 = data[0]["org_ID"].toString();
-
-    });
-    print(data);
+  Future<List<dynamic>> get() async {
     return data;
   }
-
   @override
   void initState() {
     data = widget.data;
-    print("after");
-    print(data);
+print("after");
+print(data);
     super.initState();
-    getSWData().then(
-          (value) {
-        // setState(data = value);
-        _mySelection = value![0]['org_ID'].toString();
-        _mySelection1 = value![0]['org_ID'].toString();
-      },
-    );
   }
   // Future<Uint8List> _generatePdf(
   //     PdfPageFormat format,
@@ -228,49 +161,10 @@ class _Mas7obatRepShowState extends State<Mas7obatRepShow> {
     //     ),
     //   ),
     // );
-    return   SafeArea(
+    return
+      SafeArea(
       child: Column(
         children: [
-          Container(
-            height:MediaQuery.of(context).size.height * .072,
-            child: DropdownFormField(
-              onEmptyActionPressed: () async {},
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  suffixIcon: Icon(Icons.arrow_drop_down),
-                  labelText: "عميل"),
-              onSaved: (dynamic str) {},
-              onChanged: (dynamic str) {print(str["org_ID"]);
-              _mySelection1=str["org_ID"].toString();
-              ;},
-
-              displayItemFn: (dynamic item) => Text(
-                (item ?? {})['orgName'] ?? '',
-                style: TextStyle(fontSize: 14),
-              ),
-              findFn: (dynamic str) async => data,
-              selectedFn: (dynamic item1, dynamic item2) {
-                if (item1 != null && item2 != null) {
-                  return item1['orgName'] == item2['orgName'];
-                }
-                return false;
-              },
-              filterFn: (dynamic item, str) =>
-              item['orgName'].toLowerCase().indexOf(str.toLowerCase()) >= 0,
-              dropdownItemFn: (dynamic item, int position, bool focused,
-                  bool selected, Function() onTap) {
-                return ListTile(
-                  title: Text(item['orgName']),
-                  subtitle: Text(
-                    item['org_ID'].toString(),
-                  ),selected: false,
-
-                  tileColor:
-                  focused ? Color.fromARGB(20, 0, 0, 0) : Colors.transparent,
-                  onTap: onTap,
-                );
-              },),
-          ),
           Expanded(
             child: SingleChildScrollView(
               scrollDirection: Axis.vertical,
@@ -280,9 +174,9 @@ class _Mas7obatRepShowState extends State<Mas7obatRepShow> {
                 columns: [
                   DataColumn(label: Text('اسم الصنف')),
                   DataColumn(label: Text('المسحوبات')),
-                  DataColumn(label: Text('اجمالي قيمه',style: (TextStyle(fontSize: 10)),)),
+                  DataColumn(label: Text('اجمالي ',style: (TextStyle(fontSize: 10)),)),
                   DataColumn(label: Text('المرتجعات')),
-                  DataColumn(label: Text('اجمالي قيمه',style: (TextStyle(fontSize: 10)),)),
+                  DataColumn(label: Text('اجمالي',style: (TextStyle(fontSize: 10)),)),
                 ],
                 rows: List.generate(data.length, (index) {
                   final b = data[index]["itemName"];

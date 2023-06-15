@@ -1,14 +1,14 @@
-import 'dart:typed_data';
+
+
+///10-6-2023
+
 import 'package:flutter/services.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
-import 'package:printing/printing.dart';
 
 import 'package:flutter/material.dart';
 
 class OnlyOneRepShow extends StatefulWidget {
-  OnlyOneRepShow({Key? key,required this.data}) : super(key: key);
-  List data;
+   OnlyOneRepShow({Key? key,required this.data}) : super(key: key);
+List data;
   @override
   State<OnlyOneRepShow> createState() => _OnlyOneRepShowState();
 }
@@ -22,93 +22,6 @@ class _OnlyOneRepShowState extends State<OnlyOneRepShow> {
     super.initState();
   }
 
-  // Future<Uint8List> _generatePdf(
-  //     PdfPageFormat format,
-  //     ) async {
-  //   final pdf = pw.Document(
-  //     version: PdfVersion.pdf_1_5,
-  //     compress: true,
-  //   );
-  //   var data1 = await rootBundle.load("assets/fonts/Cairo-Black.ttf");
-  //   final ttf = pw.Font.ttf(data1);
-  //   pdf.addPage(
-  //     pw.Page(
-  //       pageFormat: format,
-  //       build: (context) {
-  //         return pw.Table(
-  //             defaultColumnWidth: pw.FixedColumnWidth(200.0),
-  //             border: pw.TableBorder.all(
-  //                 color: PdfColor.fromInt(23323),
-  //                 style: pw.BorderStyle.solid,
-  //                 width: 1),
-  //             children: [
-  //               pw.TableRow(children: [
-  //                 pw.Column(children: [
-  //                   pw.Column(children: [
-  //                     pw.Text('كود العميل', style:
-  //                     pw.TextStyle(fontSize: 12, font: ttf),
-  //                         textDirection: pw.TextDirection.rtl),
-  //                   ]),
-  //                   for (var i = 0; i < data.length; i++)
-  //                     pw.Column(children: [
-  //                       pw.Text(data[i]["customerTag"].toString(),
-  //                           style: pw.TextStyle(fontSize: 13, font: ttf),
-  //                           textDirection: pw.TextDirection.rtl),
-  //                       pw.Divider(thickness: 1)
-  //                     ])
-  //                 ]),
-  //                 pw.Column(children: [
-  //                   pw.Column(children: [
-  //                     pw.Text('اسم العميل', style:
-  //                     pw.TextStyle(fontSize: 12, font: ttf),
-  //                         textDirection: pw.TextDirection.rtl),
-  //                   ]),
-  //                   pw.Column(children: [
-  //                     for (var x = 0; x < data.length; x++)
-  //                       pw.Text(data[x]["customerName"].toString(),
-  //                           style: pw.TextStyle(fontSize: 13, font: ttf),
-  //                           textDirection: pw.TextDirection.rtl),
-  //                     pw.Divider(thickness: 1)
-  //                   ])
-  //                 ]),
-  //                 pw.Column(children: [
-  //                   pw.Column(children: [
-  //                     pw.Text('اسم الصنف',
-  //                         style: pw.TextStyle(fontSize: 12, font: ttf),
-  //                         textDirection: pw.TextDirection.rtl),
-  //                   ]),
-  //                   pw.Column(children: [
-  //                     for (var x = 0; x < data.length; x++)
-  //                       pw.Text(data[x]["itemName"].toString(),
-  //                           style: pw.TextStyle(fontSize: 13, font: ttf),
-  //                           textDirection: pw.TextDirection.rtl),
-  //                     pw.Divider(thickness: 1)
-  //                   ])
-  //                 ]),
-  //                 pw.Column(children: [
-  //                   pw.Column(children: [
-  //                     pw.Text('الكميئة المأخوذة',
-  //                         style: pw.TextStyle(fontSize: 12, font: ttf),
-  //                         textDirection: pw.TextDirection.rtl),
-  //                   ]),
-  //                   pw.Column(children: [
-  //                     for (var x = 0; x < data.length; x++)
-  //                       pw.Text(data[x]["quantityTake"].toString(),
-  //                           style: pw.TextStyle(fontSize: 13, font: ttf),
-  //                           textDirection: pw.TextDirection.rtl),
-  //                     pw.Divider(thickness: 1)
-  //                   ])
-  //                 ]),
-  //               ]),
-  //             ]);
-  //       },
-  //     ),
-  //   );
-  //
-  //   return pdf.save();
-  // }
-
-
   @override
   Widget build(BuildContext context) {
     return   SafeArea(
@@ -119,6 +32,7 @@ class _OnlyOneRepShowState extends State<OnlyOneRepShow> {
               scrollDirection: Axis.horizontal,
               child: DataTable(
                 columnSpacing: 30.0,
+                border: TableBorder.all(),
                 columns: [
                   DataColumn(label: Text('اسم العميل')),
                   DataColumn(label: Text('اسم الصنف')),
@@ -137,7 +51,23 @@ class _OnlyOneRepShowState extends State<OnlyOneRepShow> {
                 }),
               ),
             ),
-          ),
+          ),  Container(
+            color: Colors.blue,
+            height: 38,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children:
+
+              [ Text(
+                  'اجمالي عدد العملاء',
+                  style: TextStyle(
+
+                      fontSize: 15, fontWeight: FontWeight.bold)
+              ),
+                VerticalDivider(color: Colors.black,thickness: 2,),
+                Text("${data.length}"),
+    ]),
+          )
         ],
       ),
     );

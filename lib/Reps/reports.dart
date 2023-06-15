@@ -1,17 +1,22 @@
-import 'dart:convert';
 
+///11-6-2023
+
+
+
+import 'dart:convert';
 import 'package:dropdown_plus/dropdown_plus.dart';
+import 'package:dy_app/Reps/Mas7obatRep2.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../databasehelper.dart';
-import '../resources/colors.dart';
 import 'DeneralDailyRep.dart';
+import 'GeneralDailyRep2.dart';
 import 'IndebtednessRep.dart';
 import 'GeneralSafeRep.dart';
 import 'InventoryRep.dart';
 import 'ItemLogs.dart';
+import 'ItemsLog2.dart';
 import 'Mas7obatRep.dart';
 import 'NewCusts.dart';
 import 'OnlyOneRep.dart';
@@ -50,7 +55,7 @@ class _ReportsState extends State<Reports> {
     print(fff);
     return list2;
   }
-  double? tag;
+   double? tag;
 
   Future getSWData() async {
     List ff = [];
@@ -70,7 +75,6 @@ class _ReportsState extends State<Reports> {
     print(ff);
     setState(() {
       data = ff;
-
       _mySelection = data[0]["org_ID"].toString();
       _mySelection1 = data[0]["org_ID"].toString();
 
@@ -98,16 +102,13 @@ class _ReportsState extends State<Reports> {
   }
   Future GetAllMas7obatData() async {
     final prefs = await SharedPreferences.getInstance();
-    double?  tag  = prefs.getDouble("tag");
-    int  ? tagx    = tag?.toInt();
-    final String url = "http://sales2563.dynamicsdb2.com/api/Mas7obat/$_mySelection1";
+    final String url = "http://sales.dynamicsdb2.com/api/Mas7obat/$_mySelection1";
     var response =
-    await http.get(Uri.parse(url), headers: {"Accept": "application/json"});
+        await http.get(Uri.parse(url), headers: {"Accept": "application/json"});
     if (response.statusCode == 200) {
       print("Saving Data ");
       print(response.body);
-    }
-    else {
+    } else {
       print(response.statusCode);
     }
 
@@ -121,9 +122,9 @@ class _ReportsState extends State<Reports> {
 
   Future GetAllIndebtednessData() async {
     final prefs = await SharedPreferences.getInstance();
-    double? tag  = prefs.getDouble("tag");
-    int? tagx    = tag?.toInt();
-    final String url = "http://sales2563.dynamicsdb2.com/api/Indebtedness/$tagx";
+  double? tag  = prefs.getDouble("tag");
+     int? tagx    = tag?.toInt();
+    final String url = "http://sales.dynamicsdb2.com/api/Indebtedness/$tagx";
     var response =
     await http.get(Uri.parse(url), headers: {"Accept": "application/json"});
     if (response.statusCode == 200) {
@@ -144,9 +145,9 @@ class _ReportsState extends State<Reports> {
     final prefs = await SharedPreferences.getInstance();
     int?  store  = prefs.getInt("store");
 
-    final String url = "http://sales2563.dynamicsdb2.com/api/translog/GetOneItemLog?ItemID=$ItemCode&storeID=$store";
+    final String url = "http://sales.dynamicsdb2.com/api/TransLogReport?ItemID=$ItemCode&storeID=$store";
     var response =
-    await http.get(Uri.parse(url), headers: {"Accept": "application/json"});
+    await http.post(Uri.parse(url), headers: {"Accept": "application/json"});
     if (response.statusCode == 200) {
       print("Saving Data ");
       print(response.body);
@@ -154,17 +155,16 @@ class _ReportsState extends State<Reports> {
       print(response.statusCode);
     }
 
-    List jsonResponse = jsonDecode(response.body);
-
+    String jsonResponse = jsonDecode(response.body);
     print("get Report");
     print(jsonResponse);
 
     return jsonResponse;
   }
-  ///
+///
   Future GetGeneralDailyData() async {
 
-    final String url = "http://sales2563.dynamicsdb2.com/api/GeneralDailyReport/$_mySelection";
+    final String url = "http://sales.dynamicsdb2.com/api/GeneralDailyReport/$_mySelection";
     var response =
     await http.get(Uri.parse(url), headers: {"Accept": "application/json"});
     if (response.statusCode == 200) {
@@ -186,7 +186,7 @@ class _ReportsState extends State<Reports> {
     final prefs = await SharedPreferences.getInstance();
     double?  tag  = prefs.getDouble("tag");
     int  ? tagx    = tag?.toInt();
-    final String url = "http://sales2563.dynamicsdb2.com/api/OnlyOne/$tagx";
+      final String url = "http://sales.dynamicsdb2.com/api/OnlyOne/$tagx";
     var response =
     await http.get(Uri.parse(url), headers: {"Accept": "application/json"});
     if (response.statusCode == 200) {
@@ -208,7 +208,7 @@ class _ReportsState extends State<Reports> {
     final prefs = await SharedPreferences.getInstance();
     double?  tag  = prefs.getDouble("tag");
     int  ? tagx    = tag?.toInt();
-    final String url = "http://sales2563.dynamicsdb2.com/api/DisContCust/$tagx";
+    final String url = "http://sales.dynamicsdb2.com/api/DisContCust/$tagx";
     var response =
     await http.get(Uri.parse(url), headers: {"Accept": "application/json"});
     if (response.statusCode == 200) {
@@ -230,7 +230,7 @@ class _ReportsState extends State<Reports> {
     final prefs = await SharedPreferences.getInstance();
     double?  tag  = prefs.getDouble("tag");
     int  ? tagx    = tag?.toInt();
-    final String url = "http://sales2563.dynamicsdb2.com/api/NewCusts/$tagx";
+    final String url = "http://sales.dynamicsdb2.com/api/NewCusts/$tagx";
     var response =
     await http.get(Uri.parse(url), headers: {"Accept": "application/json"});
     if (response.statusCode == 200) {
@@ -252,7 +252,7 @@ class _ReportsState extends State<Reports> {
     final prefs = await SharedPreferences.getInstance();
     int?  storeId  = prefs.getInt("store");
     print(storeId);
-    final String url = "http://sales2563.dynamicsdb2.com/api/Inventory/$storeId";
+    final String url = "http://sales.dynamicsdb2.com/api/Inventory/$storeId";
     var response =
     await http.get(Uri.parse(url), headers: {"Accept": "application/json"});
     if (response.statusCode == 200) {
@@ -274,7 +274,7 @@ class _ReportsState extends State<Reports> {
     final prefs = await SharedPreferences.getInstance();
     double?  tag  = prefs.getDouble("safe_tag");
     int  ? tagx    = tag?.toInt();
-    final String url = "http://sales2563.dynamicsdb2.com/api/GeneralDailyReport/$tagx";
+    final String url = "http://sales.dynamicsdb2.com/api/GeneralDailyReport/$tagx";
     var response =
     await http.get(Uri.parse(url), headers: {"Accept": "application/json"});
     if (response.statusCode == 200) {
@@ -294,458 +294,570 @@ class _ReportsState extends State<Reports> {
 
   @override
   Widget build(BuildContext context) {
-    var h = MediaQuery.of(context).size.height;
-    var w = MediaQuery.of(context).size.width;
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: AppColors.mainColor,
-          toolbarHeight: w * 0.2,
-          scrolledUnderElevation: 10,
-          automaticallyImplyLeading: true,
-          title:  Text("تقارير المندوب",
-              textDirection: TextDirection.rtl,
-              style: TextStyle(
-                fontSize: 20,
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'GE SS Two',
-              )),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-              bottomRight: Radius.circular(w * 0.1),
-              bottomLeft: Radius.circular(w * 0.1),
-            ),
-          ),
-        ),
-        body: ListView(
+    return Scaffold(
+      appBar: AppBar(
+        title: GestureDetector(onTap:(){
+        },child: Text("تقارير",style: TextStyle(color: Colors.white),),),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+  //تعديل
             Container(
-              padding: EdgeInsets.all(35),
-              margin: EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black, width: 4),
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  new BoxShadow(color: Colors.green, offset: new Offset(6.0, 6.0),),
-                ],
-              ),
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * .26,
-              child:
-              Container(
-                child: Column(
-                  children: [
-                    Text(
-                      "اجمالي مسحوبات عملاء المندوب",
-                      textDirection: TextDirection.rtl,
-                      style: (TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                    ),
-                    Container(
-                      height:MediaQuery.of(context).size.height * .072,
-                      child: DropdownFormField(
-                        onEmptyActionPressed: () async {},
-                        decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            suffixIcon: Icon(Icons.arrow_drop_down),
-                            labelText: "عميل"),
-                        onSaved: (dynamic str) {},
-                        onChanged: (dynamic str) {print(str["org_ID"]);
-                        _mySelection1=str["org_ID"].toString();
-                        ;},
-
-                        displayItemFn: (dynamic item) => Text(
-                          (item ?? {})['orgName'] ?? '',
-                          style: TextStyle(fontSize: 14),
-                        ),
-                        findFn: (dynamic str) async => data,
-                        selectedFn: (dynamic item1, dynamic item2) {
-                          if (item1 != null && item2 != null) {
-                            return item1['orgName'] == item2['orgName'];
-                          }
-                          return false;
-                        },
-                        filterFn: (dynamic item, str) =>
-                        item['orgName'].toLowerCase().indexOf(str.toLowerCase()) >= 0,
-                        dropdownItemFn: (dynamic item, int position, bool focused,
-                            bool selected, Function() onTap) {
-                          return ListTile(
-                            title: Text(item['orgName']),
-                            subtitle: Text(
-                              item['org_ID'].toString(),
-                            ),selected: false,
-
-                            tileColor:
-                            focused ? Color.fromARGB(20, 0, 0, 0) : Colors.transparent,
-                            onTap: onTap,
-                          );
-                        },),
-                    ),
-                    ElevatedButton(
-                        onPressed: () async {
-                          GetAllMas7obatData().then((value) {
-                            print("before");
-                            print(value);
-                            Navigator.push(context, MaterialPageRoute(builder: (_)=>Mas7obatRepShow(data : value)));
-                          });
-                        },
-                        child: Text("استعراض"))
-                  ],
-                ),
-              ),
+              width: MediaQuery.of(context).size.width*1,
+              child: GestureDetector(onTap:(){
+                Navigator.push(context, MaterialPageRoute(builder: (_)=>ItemsLog()));
+              },child: Center(
+                child: Text("تقرير حركه صنف"  ,textDirection: TextDirection.rtl,
+                  style: (TextStyle(fontWeight: FontWeight.bold, fontSize: 25,color: Colors.amber)),),
+              )),
             ),
-            //details
+
+//تعديل
             Container(
-              padding: EdgeInsets.all(35),
-              margin: EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black, width: 4),
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  new BoxShadow(color: Colors.green, offset: new Offset(6.0, 6.0),),
-                ],
-              ),
-
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * .28,
-              child:
-              Container(
-
-                child:
-                Column(
-                  children: [
-                    Text(
-                      "حركه صنف",
-                      textDirection: TextDirection.rtl,
-                      style: (TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                    ),
-                    DropdownFormField(
-                      onEmptyActionPressed: () async {},
-                      decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          suffixIcon: Icon(Icons.arrow_drop_down),
-                          labelText: "صنف"),
-                      onSaved: (dynamic str) {},
-                      onChanged: (dynamic str) {
-                        print(str["Item_Name"]);
-                        print(str["Item_ID"]);
-                        _mySelectionItem = str["Item_Name"];
-                        setState(() {
-                          ItemCode = str["Item_ID"];
-                        });
-                        ;
-                      },
-                      validator: (dynamic str) {},
-                      displayItemFn: (dynamic item) => Text(
-                        (item ?? {})['Item_Name'] ?? '',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      findFn: (dynamic str) async => list2,
-                      selectedFn: (dynamic item1, dynamic item2) {
-                        if (item1 != null && item2 != null) {
-                          return item1['Item_Name'] == item2['Item_Name'];
-                        }
-                        return false;
-                      },
-                      filterFn: (dynamic item, str) =>
-                      item['Item_Name'].toLowerCase().indexOf(str.toLowerCase()) >= 0,
-                      dropdownItemFn: (dynamic item, int position, bool focused,
-                          bool selected, Function() onTap) {
-                        return ListTile(
-                          title: Text(item['Item_Name']),
-                          subtitle: Text(
-                            item['Item_ID']?.toString() ?? '',
-                          ),
-                          selected: false,
-                          tileColor:
-                          focused ? Color.fromARGB(20, 0, 0, 0) : Colors.transparent,
-                          onTap: onTap,
-                        );
-                      },
-                    ),
-                    ElevatedButton(
-                        onPressed: () async {
-                          GetItemLog().then((value) {
-                            print("before");
-                            print(value);
-                            Navigator.push(context, MaterialPageRoute(builder: (_)=>ItemLogShow(data : value)));
-                          });
-                        },
-                        child: Text("استعراض"))
-                  ],
-                ),
-              ),
+              width: MediaQuery.of(context).size.width*1,
+              child: GestureDetector(onTap:(){
+                Navigator.push(context, MaterialPageRoute(builder: (_)=>Mas7obatRepShow2()));
+              },child: Center(
+                child: Text("مسحوبات"  ,textDirection: TextDirection.rtl,
+                  style: (TextStyle(fontWeight: FontWeight.bold, fontSize: 25,color: Colors.amber)),),
+              )),
             ),
+
+            // Container(
+            //   padding: EdgeInsets.all(35),
+            //   margin: EdgeInsets.all(20),
+            //   decoration: BoxDecoration(
+            //     border: Border.all(color: Colors.black, width: 4),
+            //     borderRadius: BorderRadius.circular(8),
+            //     boxShadow: [
+            //       new BoxShadow(color: Colors.green, offset: new Offset(6.0, 6.0),),
+            //     ],
+            //   ),
+            //   width: MediaQuery.of(context).size.width,
+            //   height: MediaQuery.of(context).size.height * .26,
+            //   child:
+            //       Container(
+            //
+            //         child:
+            //             Column(
+            //               children: [
+            //                 Text(
+            //                   "اجمالي مسحوبات عملاء المندوب",
+            //                   textDirection: TextDirection.rtl,
+            //                   style: (TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+            //                 ),
+            //                 Container(
+            //                     height:MediaQuery.of(context).size.height * .072,
+            //                   child: DropdownFormField(
+            //                     onEmptyActionPressed: () async {},
+            //                     decoration: InputDecoration(
+            //                         border: OutlineInputBorder(),
+            //                         suffixIcon: Icon(Icons.arrow_drop_down),
+            //                         labelText: "عميل"),
+            //                     onSaved: (dynamic str) {},
+            //                     onChanged: (dynamic str) {print(str["org_ID"]);
+            //                     _mySelection1=str["org_ID"].toString();
+            //                     ;},
+            //                     displayItemFn: (dynamic item) => Text(
+            //                       (item ?? {})['orgName'] ?? '',
+            //                       style: TextStyle(fontSize: 14),
+            //                     ),
+            //                     findFn: (dynamic str) async => data,
+            //                     selectedFn: (dynamic item1, dynamic item2) {
+            //                       if (item1 != null && item2 != null) {
+            //                         return item1['orgName'] == item2['orgName'];
+            //                       }
+            //                       return false;
+            //                     },
+            //                     filterFn: (dynamic item, str) =>
+            //                     item['orgName'].toLowerCase().indexOf(str.toLowerCase()) >= 0,
+            //                     dropdownItemFn: (dynamic item, int position, bool focused,
+            //                         bool selected, Function() onTap) {
+            //                       return ListTile(
+            //                         title: Text(item['orgName']),
+            //                         subtitle: Text(
+            //                           item['org_ID'].toString(),
+            //                         ),selected: false,
+            //                         tileColor:
+            //                         focused ? Color.fromARGB(20, 0, 0, 0) : Colors.transparent,
+            //                         onTap: onTap,
+            //                       );
+            //                     },),
+            //                 ),
+            //                 ElevatedButton(
+            //                     onPressed: () async {
+            //                       GetAllMas7obatData().then((value) {
+            //                         print("before");
+            //                         print(value);
+            //                         Navigator.push(context, MaterialPageRoute(builder: (_)=>Mas7obatRepShow(data : value)));
+            //                       });
+            //                     },
+            //                     child: Text("استعراض"))
+            //               ],
+            //             ),
+            //         ),
+            // ),
+
+
+
+        //details
+
+
+//             Container(
+//               padding: EdgeInsets.all(35),
+//               margin: EdgeInsets.all(20),
+//               decoration: BoxDecoration(
+//                 border: Border.all(color: Colors.black, width: 4),
+//                 borderRadius: BorderRadius.circular(8),
+//                 boxShadow: [
+//                   new BoxShadow(color: Colors.green, offset: new Offset(6.0, 6.0),),
+//                 ],
+//               ),
+//
+//               width: MediaQuery.of(context).size.width,
+//               height: MediaQuery.of(context).size.height * .28,
+//               child:
+//               Container(
+//
+//                 child:
+//                 Column(
+//                   children: [
+//                     Text(
+//                       "حركه صنف",
+//                       textDirection: TextDirection.rtl,
+//                       style: (TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+//                     ),
+//                     DropdownFormField(
+//                       onEmptyActionPressed: () async {},
+//                       decoration: InputDecoration(
+//                           border: OutlineInputBorder(),
+//                           suffixIcon: Icon(Icons.arrow_drop_down),
+//                           labelText: "صنف"),
+//                       onSaved: (dynamic str) {},
+//                       onChanged: (dynamic str) {
+//                         print(str["Item_Name"]);
+//                         print(str["Item_ID"]);
+//                         _mySelectionItem = str["Item_Name"];
+//                         setState(() {
+// ItemCode = str["Item_ID"];
+//                         });
+//                         ;
+//                       },
+//                       validator: (dynamic str) {},
+//                       displayItemFn: (dynamic item) => Text(
+//                         (item ?? {})['Item_Name'] ?? '',
+//                         style: TextStyle(fontSize: 16),
+//                       ),
+//                       findFn: (dynamic str) async => list2,
+//                       selectedFn: (dynamic item1, dynamic item2) {
+//                         if (item1 != null && item2 != null) {
+//                           return item1['Item_Name'] == item2['Item_Name'];
+//                         }
+//                         return false;
+//                       },
+//                       filterFn: (dynamic item, str) =>
+//                       item['Item_Name'].toLowerCase().indexOf(str.toLowerCase()) >= 0,
+//                       dropdownItemFn: (dynamic item, int position, bool focused,
+//                           bool selected, Function() onTap) {
+//                         return ListTile(
+//                           title: Text(item['Item_Name']),
+//                           subtitle: Text(
+//                             item['Item_ID']?.toString() ?? '',
+//                           ),
+//                           selected: false,
+//                           tileColor:
+//                           focused ? Color.fromARGB(20, 0, 0, 0) : Colors.transparent,
+//                           onTap: onTap,
+//                         );
+//                       },
+//                     ),
+//
+//                     ElevatedButton(
+//                         onPressed: () async {
+//                           GetItemLog().then((value) {
+//                             print("before");
+//                             print(value);
+//                             Navigator.push(context, MaterialPageRoute(builder: (_)=>ItemLogShow(data : value)));
+//                           });
+//                         },
+//                         child: Text("استعراض"))
+//                   ],
+//                 ),
+//               ),
+//             ),
             //end
+
+//كما هو
             Container(
-              padding: EdgeInsets.all(35),
-              margin: EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black, width: 4),
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  new BoxShadow(color: Colors.blueGrey, offset: new Offset(6.0, 6.0),),
-                ],
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Text(
-                    "اجمالي مديونيات  كل عملاء المندوب",
-                    textDirection: TextDirection.rtl,
-                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 13),
-                  ),
-                  ElevatedButton(
-                    onPressed: () async {
-                      GetAllIndebtednessData().then((value) {
-                        print(value);
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => IndebtednessRepShow(data: value)));
-                      });
-                    },
-                    child: Text("استعراض"),
-                  ),
-                ],
-              ),
+              width: MediaQuery.of(context).size.width*1,
+              child: GestureDetector(onTap:(){
+                GetAllIndebtednessData().then((value) {
+                  print(value);
+                  Navigator.push(context, MaterialPageRoute(builder: (_)=>IndebtednessRepShow(data : value)));
+                });
+              },child: Center(
+                child: Text("مديونيات عملاء المندوب"  ,textDirection: TextDirection.rtl,
+                  style: (TextStyle(fontWeight: FontWeight.bold, fontSize: 25,color: Colors.amber)),),
+              )),
             ),
+
+
+//تعديل
             Container(
-              padding: EdgeInsets.all(35),
-              margin: EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black, width: 4),
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  new BoxShadow(color: Colors.green, offset: new Offset(6.0, 6.0),),
-                ],
-              ),
-
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * .27,
-              child: Column(
-                children: [
-                  Container(
-                    height:MediaQuery.of(context).size.height * .08,
-
-                    child: DropdownFormField(
-                      onEmptyActionPressed: () async {},
-                      decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          suffixIcon: Icon(Icons.arrow_drop_down),
-                          labelText: "عميل "),
-                      onSaved: (dynamic str) {},
-                      onChanged: (dynamic str) {print(str["org_ID"]);
-                      _mySelection=str["org_ID"].toString();
-                      ;},
-
-
-                      displayItemFn: (dynamic item) => Text(
-                        (item ?? {})['orgName'] ?? '',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      findFn: (dynamic str) async => data,
-                      selectedFn: (dynamic item1, dynamic item2) {
-                        if (item1 != null && item2 != null) {
-                          return item1['orgName'] == item2['orgName'];
-                        }
-                        return false;
-                      },
-                      filterFn: (dynamic item, str) =>
-                      item['orgName'].toLowerCase().indexOf(str.toLowerCase()) >= 0,
-                      dropdownItemFn: (dynamic item, int position, bool focused,
-                          bool selected, Function() onTap) {
-
-                        return ListTile(
-
-                          title: Text(item['orgName']),
-                          subtitle: Text(
-                            item['org_ID'].toString(),
-                          ),selected: false,
-
-                          tileColor:
-                          focused ? Color.fromARGB(20, 0, 0, 0) : Colors.transparent,
-                          onTap: onTap,
-                        );
-                      },),
-                  ),
-                  Container(
-                    child: Text(
-                      "تفاصيل معاملات عميل محدد",
-                      textDirection: TextDirection.rtl,
-                      style: (TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-                    ),
-                  ),
-                  Container(
-                    child: ElevatedButton(
-                        onPressed: () async {
-                          GetGeneralDailyData().then((value) {
-                            print(value);
-                            Navigator.push(context, MaterialPageRoute(builder: (_)=>GeneralDailyRepShow(data : value)));
-                          });
-
-
-                        },
-                        child: Text("استعراض")),
-                  )
-                ],
-              ),
+              width: MediaQuery.of(context).size.width*1,
+              child: GestureDetector(onTap:(){
+                  Navigator.push(context, MaterialPageRoute(builder: (_)=>GeneralDailyShow()));
+              },child: Center(
+                child: Text("تفاصيل معاملات عميل محدد"  ,textDirection: TextDirection.rtl,
+                  style: (TextStyle(fontWeight: FontWeight.bold, fontSize: 25,color: Colors.amber)),),
+              )),
             ),
+
+            //   Container(
+          //     padding: EdgeInsets.all(35),
+          //     margin: EdgeInsets.all(20),
+          //     decoration: BoxDecoration(
+          //       border: Border.all(color: Colors.black, width: 4),
+          //       borderRadius: BorderRadius.circular(8),
+          //       boxShadow: [
+          //         new BoxShadow(color: Colors.green, offset: new Offset(6.0, 6.0),),
+          //       ],
+          //     ),
+          // width: MediaQuery.of(context).size.width,
+          //     height: MediaQuery.of(context).size.height * .19,
+          //     child: Column(
+          //       children: [
+          //         Text(
+          //           "اجمالي مديونيات  كل عملاء المندوب",
+          //           textDirection: TextDirection.rtl,
+          //           style: (TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+          //         ),
+          //         ElevatedButton(
+          //             onPressed: () async {
+          //               GetAllIndebtednessData().then((value) {
+          //                 print(value);
+          //                 Navigator.push(context, MaterialPageRoute(builder: (_)=>IndebtednessRepShow(data : value)));
+          //               });
+          //             },
+          //             child: Text("استعراض"))
+          //       ],
+          //     ),
+          //   ),
+
+
+            // Container(
+            //   padding: EdgeInsets.all(35),
+            //   margin: EdgeInsets.all(20),
+            //   decoration: BoxDecoration(
+            //     border: Border.all(color: Colors.black, width: 4),
+            //     borderRadius: BorderRadius.circular(8),
+            //     boxShadow: [
+            //       new BoxShadow(color: Colors.green, offset: new Offset(6.0, 6.0),),
+            //     ],
+            //   ),
+            //
+            //   width: MediaQuery.of(context).size.width,
+            //   height: MediaQuery.of(context).size.height * .27,
+            //   child: Column(
+            //     children: [
+            //       Container(
+            //         height:MediaQuery.of(context).size.height * .08,
+            //
+            //         child:
+            //         DropdownFormField(
+            //           onEmptyActionPressed: () async {},
+            //           decoration: InputDecoration(
+            //               border: OutlineInputBorder(),
+            //               suffixIcon: Icon(Icons.arrow_drop_down),
+            //               labelText: "عميل "),
+            //           onSaved: (dynamic str) {},
+            //           onChanged: (dynamic str) {print(str["org_ID"]);
+            //           _mySelection=str["org_ID"].toString();
+            //           ;},
+            //
+            //
+            //           displayItemFn: (dynamic item) => Text(
+            //             (item ?? {})['orgName'] ?? '',
+            //             style: TextStyle(fontSize: 16),
+            //           ),
+            //           findFn: (dynamic str) async => data,
+            //           selectedFn: (dynamic item1, dynamic item2) {
+            //             if (item1 != null && item2 != null) {
+            //               return item1['orgName'] == item2['orgName'];
+            //             }
+            //             return false;
+            //           },
+            //           filterFn: (dynamic item, str) =>
+            //           item['orgName'].toLowerCase().indexOf(str.toLowerCase()) >= 0,
+            //           dropdownItemFn: (dynamic item, int position, bool focused,
+            //               bool selected, Function() onTap) {
+            //
+            //             return ListTile(
+            //
+            //               title: Text(item['orgName']),
+            //               subtitle: Text(
+            //                 item['org_ID'].toString(),
+            //               ),selected: false,
+            //
+            //               tileColor:
+            //               focused ? Color.fromARGB(20, 0, 0, 0) : Colors.transparent,
+            //               onTap: onTap,
+            //             );
+            //           },),
+            //       ),
+            //       Container(
+            //         child: Text(
+            //           "تفاصيل معاملات عميل محدد",
+            //           textDirection: TextDirection.rtl,
+            //           style: (TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+            //         ),
+            //       ),
+            //       Container(
+            //         child: ElevatedButton(
+            //             onPressed: () async {
+            //                 GetGeneralDailyData().then((value) {
+            //                   print(value);
+            //                   Navigator.push(context, MaterialPageRoute(builder: (_)=>GeneralDailyRepShow(data : value)));
+            //                 });
+            //
+            //
+            //             },
+            //             child: Text("استعراض")),
+            //       )
+            //     ],
+            //   ),
+            // ),
+
+//كما هو
             Container(
-              padding: EdgeInsets.all(35),
-              margin: EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black, width: 4),
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  new BoxShadow(color: Colors.green, offset: new Offset(6.0, 6.0),),
-                ],
-              ),
-
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * .21,
-              child: Column(
-                children: [
-                  Text(
-                    "عملاءالصنف الواحد ",
-                    textDirection: TextDirection.rtl,
-                    style: (TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                  ),
-                  ElevatedButton(
-                      onPressed: () async {
-                        OnlyOne().then((value) {
-                          print(value);
-                          Navigator.push(context, MaterialPageRoute(builder: (_)=>OnlyOneRepShow(data : value)));
-                        });
-                      },
-                      child: Text("استعراض"))
-                ],
-              ),
+              width: MediaQuery.of(context).size.width*1,
+              child: GestureDetector(onTap:(){
+                OnlyOne().then((value) {
+                  print(value);
+                  Navigator.push(context, MaterialPageRoute(builder: (_)=>OnlyOneRepShow(data: value)));
+                });
+              },child: Center(
+                child: Text("عملاء الصنف الواحد"  ,textDirection: TextDirection.rtl,
+                  style: (TextStyle(fontWeight: FontWeight.bold, fontSize: 25,color: Colors.amber)),),
+              )),
             ),
+//كما هو
+            // Container(
+            //   padding: EdgeInsets.all(35),
+            //   margin: EdgeInsets.all(20),
+            //   decoration: BoxDecoration(
+            //     border: Border.all(color: Colors.black, width: 4),
+            //     borderRadius: BorderRadius.circular(8),
+            //     boxShadow: [
+            //       new BoxShadow(color: Colors.green, offset: new Offset(6.0, 6.0),),
+            //     ],
+            //   ),
+            //
+            //   width: MediaQuery.of(context).size.width,
+            //   height: MediaQuery.of(context).size.height * .21,
+            //   child: Column(
+            //     children: [
+            //       Text(
+            //         "عملاءالصنف الواحد ",
+            //         textDirection: TextDirection.rtl,
+            //         style: (TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            //       ),
+            //       ElevatedButton(
+            //           onPressed: () async {
+            //             OnlyOne().then((value) {
+            //               print(value);
+            //               Navigator.push(context, MaterialPageRoute(builder: (_)=>OnlyOneRepShow(data : value)));
+            //             });
+            //           },
+            //           child: Text("استعراض"))
+            //     ],
+            //   ),
+            // ),
             Container(
-              padding: EdgeInsets.all(35),
-              margin: EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black, width: 4),
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  new BoxShadow(color: Colors.green, offset: new Offset(6.0, 6.0),),
-                ],
-              ),
-
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * .21,
-              child: Column(
-                children: [
-                  Text(
-                    "العملاء المنقطعين ",
-                    textDirection: TextDirection.rtl,
-                    style: (TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                  ),
-                  ElevatedButton(
-                      onPressed: () async {
-                        DisContCust().then((value) {
-                          print(value);
-                          Navigator.push(context, MaterialPageRoute(builder: (_)=>DisContCustRepShow(data : value)));
-                        });
-                      },
-                      child: Text("استعراض"))
-                ],
-              ),
+              width: MediaQuery.of(context).size.width*1,
+              child: GestureDetector(onTap:(){
+                DisContCust().then((value) {
+                  print(value);
+                  Navigator.push(context, MaterialPageRoute(builder: (_)=>DisContCustRepShow(data : value)));
+                });
+              },child: Center(
+                child: Text("العملاء المنقطعين"  ,textDirection: TextDirection.rtl,
+                  style: (TextStyle(fontWeight: FontWeight.bold, fontSize: 25,color: Colors.amber)),),
+              )),
             ),
+
+            // Container(
+            //   padding: EdgeInsets.all(35),
+            //   margin: EdgeInsets.all(20),
+            //   decoration: BoxDecoration(
+            //     border: Border.all(color: Colors.black, width: 4),
+            //     borderRadius: BorderRadius.circular(8),
+            //     boxShadow: [
+            //       new BoxShadow(color: Colors.green, offset: new Offset(6.0, 6.0),),
+            //     ],
+            //   ),
+            //
+            //   width: MediaQuery.of(context).size.width,
+            //   height: MediaQuery.of(context).size.height * .21,
+            //   child: Column(
+            //     children: [
+            //       Text(
+            //         "العملاء المنقطعين ",
+            //         textDirection: TextDirection.rtl,
+            //         style: (TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            //       ),
+            //       ElevatedButton(
+            //           onPressed: () async {
+            //             DisContCust().then((value) {
+            //               print(value);
+            //               Navigator.push(context, MaterialPageRoute(builder: (_)=>DisContCustRepShow(data : value)));
+            //             });
+            //           },
+            //           child: Text("استعراض"))
+            //     ],
+            //   ),
+            // ),
+//كما هو
             Container(
-              padding: EdgeInsets.all(35),
-              margin: EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black, width: 4),
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  new BoxShadow(color: Colors.green, offset: new Offset(6.0, 6.0),),
-                ],
-              ),
-
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * .21,
-              child: Column(
-                children: [
-                  Text(
-                    "العملاء الجدد ",
-                    textDirection: TextDirection.rtl,
-                    style: (TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                  ),
-                  ElevatedButton(
-                      onPressed: () async {
-                        NewCusts().then((value) {
-                          print(value);
-                          Navigator.push(context, MaterialPageRoute(builder: (_)=>NewCustsRepShow(data : value)));
-                        });
-                      },
-                      child: Text("استعراض"))
-                ],
-              ),
+              width: MediaQuery.of(context).size.width*1,
+              child: GestureDetector(onTap:(){
+                NewCusts().then((value) {
+                  print(value);
+                  Navigator.push(context, MaterialPageRoute(builder: (_)=>NewCustsRepShow(data : value)));
+                });
+              },child: Center(
+                child: Text("العملاء الجدد"  ,textDirection: TextDirection.rtl,
+                  style: (TextStyle(fontWeight: FontWeight.bold, fontSize: 25,color: Colors.amber)),),
+              )),
             ),
+            // Container(
+            //   padding: EdgeInsets.all(35),
+            //   margin: EdgeInsets.all(20),
+            //   decoration: BoxDecoration(
+            //     border: Border.all(color: Colors.black, width: 4),
+            //     borderRadius: BorderRadius.circular(8),
+            //     boxShadow: [
+            //       new BoxShadow(color: Colors.green, offset: new Offset(6.0, 6.0),),
+            //     ],
+            //   ),
+            //
+            //   width: MediaQuery.of(context).size.width,
+            //   height: MediaQuery.of(context).size.height * .21,
+            //   child: Column(
+            //     children: [
+            //       Text(
+            //         "العملاء الجدد ",
+            //         textDirection: TextDirection.rtl,
+            //         style: (TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            //       ),
+            //       ElevatedButton(
+            //           onPressed: () async {
+            //             NewCusts().then((value) {
+            //               print(value);
+            //               Navigator.push(context, MaterialPageRoute(builder: (_)=>NewCustsRepShow(data : value)));
+            //             });
+            //           },
+            //           child: Text("استعراض"))
+            //     ],
+            //   ),
+            // ),
+//كما هو
             Container(
-              padding: EdgeInsets.all(35),
-              margin: EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black, width: 4),
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  new BoxShadow(color: Colors.green, offset: new Offset(6.0, 6.0),),
-                ],
-              ),
-
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * .21,
-              child: Column(
-                children: [
-                  Text(
-                    "اصناف مخزن المندوب ",
-                    textDirection: TextDirection.rtl,
-                    style: (TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                  ),
-                  ElevatedButton(
-                      onPressed: () async {
-                        Inventory().then((value) {
-                          print(value);
-                          Navigator.push(context, MaterialPageRoute(builder: (_)=>InventoryRepShow(data : value)));
-                        });
-                      },
-                      child: Text("استعراض"))
-                ],
-              ),
+              width: MediaQuery.of(context).size.width*1,
+              child: GestureDetector(onTap:(){
+                Inventory().then((value) {
+                  print(value);
+                  Navigator.push(context, MaterialPageRoute(builder: (_)=>InventoryRepShow(data : value)));
+                });
+              },child: Center(
+                child: Text("اصناف مخزن المندوب"  ,textDirection: TextDirection.rtl,
+                  style: (TextStyle(fontWeight: FontWeight.bold, fontSize: 25,color: Colors.amber)),),
+              )),
             ),
+
+            // Container(
+            //   padding: EdgeInsets.all(35),
+            //   margin: EdgeInsets.all(20),
+            //   decoration: BoxDecoration(
+            //     border: Border.all(color: Colors.black, width: 4),
+            //     borderRadius: BorderRadius.circular(8),
+            //     boxShadow: [
+            //       new BoxShadow(color: Colors.green, offset: new Offset(6.0, 6.0),),
+            //     ],
+            //   ),
+            //
+            //   width: MediaQuery.of(context).size.width,
+            //   height: MediaQuery.of(context).size.height * .21,
+            //   child: Column(
+            //     children: [
+            //       Text(
+            //         "اصناف مخزن المندوب ",
+            //         textDirection: TextDirection.rtl,
+            //         style: (TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+            //       ),
+            //       ElevatedButton(
+            //           onPressed: () async {
+            //             Inventory().then((value) {
+            //               print(value);
+            //               Navigator.push(context, MaterialPageRoute(builder: (_)=>InventoryRepShow(data : value)));
+            //             });
+            //           },
+            //           child: Text("استعراض"))
+            //     ],
+            //   ),
+            // ),
+
             Container(
-              padding: EdgeInsets.all(35),
-              margin: EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black, width: 4),
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  new BoxShadow(color: Colors.green, offset: new Offset(6.0, 6.0),),
-                ],
-              ),
+              width: MediaQuery.of(context).size.width*1,
+              child: GestureDetector(onTap:(){
+                GeneralSafe().then((value) {
 
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * .21,
-              child: Column(
-                children: [
-                  Text(
-                    "خزينة المندوب ",
-                    textDirection: TextDirection.rtl,
-                    style: (TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                  ),
-                  ElevatedButton(
-                      onPressed: () async {
-                        GeneralSafe().then((value) {
-
-                          print(value);
-                          if(value !=null|| value !=[]){ Navigator.push(context, MaterialPageRoute(builder: (_)=>GeneralSafeRepShow(data : value)));
-                          }
-                        });
-                      },
-                      child: Text(" استعراض"))
-                ],
-              ),
+                  print(value);
+                  if(value !=null|| value !=[]){ Navigator.push(context, MaterialPageRoute(builder: (_)=>GeneralSafeRepShow(data : value)));
+                  }
+                });
+              },child: Center(
+                child: Text("خزينة المندوب"  ,textDirection: TextDirection.rtl,
+                  style: (TextStyle(fontWeight: FontWeight.bold, fontSize: 25,color: Colors.amber)),),
+              )),
             ),
+
+            // Container(
+            //   padding: EdgeInsets.all(35),
+            //   margin: EdgeInsets.all(20),
+            //   decoration: BoxDecoration(
+            //     border: Border.all(color: Colors.black, width: 4),
+            //     borderRadius: BorderRadius.circular(8),
+            //     boxShadow: [
+            //       new BoxShadow(color: Colors.green, offset: new Offset(6.0, 6.0),),
+            //     ],
+            //   ),
+            //
+            //   width: MediaQuery.of(context).size.width,
+            //   height: MediaQuery.of(context).size.height * .21,
+            //   child: Column(
+            //     children: [
+            //       Text(
+            //         "خزينة المندوب ",
+            //         textDirection: TextDirection.rtl,
+            //         style: (TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+            //       ),
+            //       ElevatedButton(
+            //           onPressed: () async {
+            //             GeneralSafe().then((value) {
+            //
+            //               print(value);
+            //               if(value !=null|| value !=[]){ Navigator.push(context, MaterialPageRoute(builder: (_)=>GeneralSafeRepShow(data : value)));
+            //               }
+            //             });
+            //           },
+            //           child: Text(" استعراض"))
+            //     ],
+            //   ),
+            // ),
           ],
         ),
       ),

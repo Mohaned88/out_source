@@ -5,8 +5,10 @@ import 'dart:async';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'controller.dart';
 import 'databasehelper.dart';
+import 'resources/constants.dart';
 
 class Printer extends StatefulWidget {
   int id;
@@ -34,14 +36,20 @@ class _PrinterState extends State<Printer> {
 
   bool loading3 = false;
   List list3 = [];
+  double sum = 0.0;
 
   Future billDetList() async {
     list3 = await Controller().fetchBillDetailsData(widget.id);
     setState(() {
       loading3 = false;
     });
+    sum = 0.0;
+    for(int i = 0; i< list3.length;i++){
+      sum += double.tryParse(list3[i]["total"].toString()) as double;
+    }
     print(list3);
   }
+
   bool loading = true;
   final conn = SqfliteDatabaseHelper.instance;
   List list = [];
@@ -49,8 +57,8 @@ class _PrinterState extends State<Printer> {
   Future billList() async {
     late List ff = [];
     var dbclient = await conn.db;
-    List<Map<String, dynamic>> maps = await dbclient
-        .rawQuery('select bill_id,bill_date,customer_id,mandoob_1,orgName from Bill INNER JOIN Organizations ON  customer_id = org_ID where bill_id = ${widget.id}');
+    List<Map<String, dynamic>> maps = await dbclient.rawQuery(
+        'select bill_id,bill_date,customer_id,mandoob_1,orgName from Bill INNER JOIN Organizations ON  customer_id = org_ID where bill_id = ${widget.id}');
     for (var item in maps) {
       ff.add(item);
     }
@@ -69,100 +77,277 @@ class _PrinterState extends State<Printer> {
     final font = await PdfGoogleFonts.nunitoExtraLight();
     var data1 = await rootBundle.load("assets/fonts/Cairo-Black.ttf");
     final ttf = pw.Font.ttf(data1);
+    final prefs = await SharedPreferences.getInstance();
     pdf.addPage(
       pw.Page(
         pageFormat: format,
         build: (context) {
-          return pw.Column(children: [
-            pw.Container(
-                child: pw.Column(
+          return pw.Directionality(
+            textDirection: pw.TextDirection.rtl,
+            child: pw.Column(
+              children: [
+                pw.SizedBox(
+                  height: 50,
+                  width: double.infinity,
+                  child: pw.Row(
+                    mainAxisSize: pw.MainAxisSize.max,
+                    crossAxisAlignment: pw.CrossAxisAlignment.center,
                     children: [
-              pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
-                  children: [
-                pw.Text("bill Number ", style: pw.TextStyle(fontSize: 15)),
-                pw.Text("${list[0]["bill_id"]}",
-                    style: pw.TextStyle(fontSize: 15))
-              ]),pw.SizedBox(height: 10),
-                      pw.Row(
-                      mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
-                      children: [
-                        pw.Text("Customer Code ", style: pw.TextStyle(fontSize: 15)),
-
-                        pw.Text("${list[0]["customer_id"]}",
-                            style: pw.TextStyle(fontSize: 15))
-                      ]),
-
-
-                      pw.Row(
-                          mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
+                      pw.Expanded(
+                        flex: 2,
+                        child: pw.Column(
+                          mainAxisSize: pw.MainAxisSize.max,
+                          crossAxisAlignment: pw.CrossAxisAlignment.end,
+                          mainAxisAlignment: pw.MainAxisAlignment.center,
                           children: [
-                            pw.Text("Customer Name ", style: pw.TextStyle(fontSize: 15)),
+                            pw.Text(
+                              "التاريخ:",
+                              style: pw.TextStyle(
+                                fontSize: 8,
+                                  font: ttf,
+                              ),
+                            ),
+                            pw.Text(
+                              "${list[0]["bill_date"]}",
+                              style: pw.TextStyle(
+                                fontSize: 8,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      pw.Expanded(
+                        flex: 3,
+                        child: pw.Text(
+                            AppConstants.customerCompName,
+                            style: pw.TextStyle(fontSize: 25, font: ttf),
+                            textDirection: pw.TextDirection.rtl,
+                          ),
+                      ),
+                    ],
+                  ),
+                ),
+                pw.SizedBox(height: 8),
+                pw.Row(
+                  mainAxisSize: pw.MainAxisSize.max,
+                  children: [
+                    pw.Expanded(////////////////////Values
+                      child: pw.Column(
+                        mainAxisSize: pw.MainAxisSize.max,
+                        crossAxisAlignment: pw.CrossAxisAlignment.end,
+                        mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
+                        children: [
+                          pw.Text(
+                            "${list[0]["bill_id"]}",
+                            style: pw.TextStyle(
+                              fontSize: 8,
+                            ),
+                          ),
+                          pw.Text(
+                            prefs.getString('mandoub_name') ?? '',
+                            style: pw.TextStyle(
+                              fontSize: 8,
+                              font: ttf,
+                            ),
+                          ),
+                          pw.Text(
+                            "${list[0]["orgName"]}",
+                            style: pw.TextStyle(fontSize: 6.5, font: ttf),
+                            textAlign: pw.TextAlign.center,
+                            textDirection: pw.TextDirection.rtl,
+                          ),
+                        ],
+                      ),
+                    ),
+                    pw.Expanded(/////////////////Names
+                      child: pw.Column(
+                        mainAxisSize: pw.MainAxisSize.max,
+                        crossAxisAlignment: pw.CrossAxisAlignment.end,
+                        mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
+                        children: [
+                          pw.Text(
+                            "رقم الفتورة",
+                            style: pw.TextStyle(fontSize: 8, font: ttf),
+                            textDirection: pw.TextDirection.rtl,
+                          ),
+                          pw.Text(
+                            "اسم المندوب ",
+                            style: pw.TextStyle(
+                              fontSize: 8,
+                              font: ttf,
+                            ),
+                          ),
+                          pw.Text(
+                            "اسم العميل ",
+                            style: pw.TextStyle(
+                              fontSize: 8,
+                              font: ttf,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                pw.SizedBox(height: 6),
+                pw.Container(
+                  color: PdfColors.grey,
+                  padding: pw.EdgeInsets.all(3),
+                  child: pw.Row(
+                    // mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,///////////////////////////
+                    mainAxisSize: pw.MainAxisSize.max,
+                    crossAxisAlignment: pw.CrossAxisAlignment.center,
+                    children: [
+                      pw.Expanded(
+                        flex: 1,
+                        child: pw.Text(
+                          "Code",
+                          textAlign: pw.TextAlign.center,
+                          style: pw.TextStyle(
+                            fontSize: 8,
+                          ),
+                        ),
+                      ),
+                      pw.Expanded(
+                        flex: 2,
+                        child: pw.Text(
+                          "Name",
+                          textAlign: pw.TextAlign.center,
+                          style: pw.TextStyle(
+                            fontSize: 8,
+                          ),
+                        ),
+                      ),
+                      pw.Expanded(
+                        flex: 1,
+                        child: pw.Text(
+                          "price",
+                          textAlign: pw.TextAlign.center,
+                          style: pw.TextStyle(
+                            fontSize: 8,
+                          ),
+                        ),
+                      ),
+                      pw.Expanded(
+                        flex: 1,
+                        child: pw.Text(
+                          "quantity",
+                          textAlign: pw.TextAlign.center,
+                          style: pw.TextStyle(
+                            fontSize: 8,
+                          ),
+                        ),
+                      ),
+                      pw.Expanded(
+                        flex: 1,
+                        child: pw.Text(
+                          "total",
+                          textAlign: pw.TextAlign.center,
+                          style: pw.TextStyle(
+                            fontSize: 8,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                pw.Table(
+                  border: pw.TableBorder.all(
+                    color: PdfColors.black,
+                    width: 1,
+                  ),
+                  children: [
+                    for (var i = 0; i < list3.length; i++)
+                      pw.TableRow(
+                        verticalAlignment: pw.TableCellVerticalAlignment.middle,
+                        children: [
+                          pw.Expanded(
+                            flex: 1,
+                            child: pw.Center(
+                              child: pw.Text(
+                                list3[i]["itemId"].toString(),
+                                style: pw.TextStyle(
+                                  fontSize: 8,
+                                ),
+                              ),
+                            ),
+                          ),
 
-                            pw.Text("${list[0]["orgName"]}",
-                                style: pw.TextStyle(fontSize: 13, font: ttf),
+                          pw.Expanded(
+                            flex: 2,
+                            child: pw.Center(
+                              child: pw.Text(
+                                list3[i]["Item_Name"].toString(),
+                                style: pw.TextStyle(fontSize: 6.5, font: ttf),
                                 textAlign: pw.TextAlign.center,
-                                textDirection: pw.TextDirection.rtl)
-                          ]),
-                      pw.Row( mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,children: [pw.SizedBox(height: 10),  pw.Text("bill Date", style: pw.TextStyle(fontSize: 15)),
-                        pw.Text("${list[0]["bill_date"]}", style: pw.TextStyle(fontSize: 15))])
-            ])),
-            pw.SizedBox(height: 25),
-            pw.Row(
-                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                children: [
-                  pw.Text("Code"),
-                  pw.Text("Name"),
-                  pw.Text("price"),
-                  pw.Text("quantity"),
-                  pw.Text("total")
-                ]),
-            pw.SizedBox(height: 10),
-            pw.Table(children: [
-              for (var i = 0; i < list3.length; i++)
-                pw.TableRow(children: [
-                  pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.center,
-                      mainAxisAlignment: pw.MainAxisAlignment.center,
-                      children: [
-                        pw.Text(list3[i]["itemId"].toString(),
-                            style: pw.TextStyle(fontSize: 15)),
-                        pw.Divider(thickness: 1)
-                      ]),
+                                textDirection: pw.TextDirection.rtl,
+                                maxLines: 3,
+                              ),
+                            ),
+                          ),
 
-          pw.Text(list3[i]["Item_Name"].toString(),
-              style: pw.TextStyle(fontSize: 13, font: ttf),
-              textAlign: pw.TextAlign.center,
-              textDirection: pw.TextDirection.rtl),
-          pw.Divider(thickness: 1),
+                          pw.Expanded(
+                            flex: 1,
+                            child: pw.Center(
+                              child: pw.Text(
+                                list3[i]["price"].toString(),
+                                style: pw.TextStyle(
+                                  fontSize: 8,
+                                ),
+                              ),
+                            ),
+                          ),
 
-                  pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.center,
-                      mainAxisAlignment: pw.MainAxisAlignment.center,
-                      children: [
-                        pw.Text(list3[i]["price"].toString(),
-                            style: pw.TextStyle(fontSize: 15)),
-                        pw.Divider(thickness: 1)
-                      ]),
-                  pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.center,
-                      mainAxisAlignment: pw.MainAxisAlignment.center,
-                      children: [
-                        pw.Text(list3[i]["unit1Quant"].toString(),
-                            style: pw.TextStyle(fontSize: 15)),
-                        pw.Divider(thickness: 1)
-                      ]),
-                  pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.center,
-                      mainAxisAlignment: pw.MainAxisAlignment.center,
-                      children: [
-                        pw.Text(list3[i]["total"].toString(),
-                            style: pw.TextStyle(fontSize: 15)),
-                        pw.Divider(thickness: 1)
-                      ])
-                ])
-            ])
-          ]
+                          pw.Expanded(
+                            flex: 1,
+                            child: pw.Center(
+                              child: pw.Text(
+                                list3[i]["unit1Quant"].toString(),
+                                style: pw.TextStyle(
+                                  fontSize: 8,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          pw.Expanded(
+                            flex: 1,
+                            child: pw.Center(
+                              child: pw.Text(
+                                list3[i]["total"].toString(),
+                                style: pw.TextStyle(
+                                  fontSize: 8,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          //pw.Divider(thickness: 1),
+                        ],
+                      ),
+                  ],
+                ),
+                pw.Row(
+                  mainAxisSize: pw.MainAxisSize.max,
+                  crossAxisAlignment: pw.CrossAxisAlignment.center,
+                  children: [
+                    pw.Expanded(
+                      child: pw.Text(
+                        '$sum'
+                      ),
+                    ),
+                    pw.Expanded(
+                      child: pw.Text(
+                          'الاجمالى',
+                        style: pw.TextStyle(
+                          fontSize: 8,
+                          font: ttf,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
 
               // children: [
               //   pw.SizedBox(
@@ -174,7 +359,9 @@ class _PrinterState extends State<Printer> {
               //   pw.SizedBox(height: 20),
               //   pw.Flexible(child: pw.FlutterLogo())
               // ],
-              );
+            ),
+          );
+
         },
       ),
     );
@@ -190,6 +377,8 @@ class _PrinterState extends State<Printer> {
           title: Text('Blue Thermal Printer'),
         ),
         body: PdfPreview(
+          canChangePageFormat: true,
+          initialPageFormat: PdfPageFormat.roll80,
           build: (format) => _generatePdf(format),
         ),
         // Container(

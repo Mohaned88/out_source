@@ -1,3 +1,15 @@
+
+
+
+
+
+
+
+
+///10-6-2023
+
+
+
 import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'package:pdf/pdf.dart';
@@ -7,7 +19,7 @@ import 'package:printing/printing.dart';
 import 'package:flutter/material.dart';
 
 class NewCustsRepShow extends StatefulWidget {
-  NewCustsRepShow({Key? key,required this.data}) : super(key: key);
+   NewCustsRepShow({Key? key,required this.data}) : super(key: key);
   List data;
   @override
   State<NewCustsRepShow> createState() => _NewCustsRepShowState();
@@ -91,28 +103,51 @@ class _NewCustsRepShowState extends State<NewCustsRepShow> {
         children: [
           Expanded(
             child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: DataTable(
-                border: TableBorder.all(),
-                columnSpacing: 30.0,
-                columns: [
-                  DataColumn(label: Text('كود العميل')),
-                  DataColumn(label: Text('اسم العميل')),
+              scrollDirection: Axis.horizontal,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: DataTable(
+                  border: TableBorder.all(),
+                  columnSpacing: 30.0,
+                  columns: [
+                    DataColumn(label: Text('كود العميل')),
+                    DataColumn(label: Text('اسم العميل')),
+                    DataColumn(label: Text('عنوان العميل')),
+                    DataColumn(label: Text('تليفون العميل')),
+                  ],
+                  rows: List.generate(data.length, (index) {
+                    final b = data[index]["customerTag"];
+                    final d = data[index]["customerName"];
+                    final address = data[index]["address"];
+                    final mobile = data[index]["mobile"];
+                    return DataRow(cells: [
+                      DataCell(Container(child: Text(b))),
+                      DataCell(Container(child: Text("$d"))),
+                      DataCell(Container(child: Text("$address"))),
+                      DataCell(Container(child: Text("$mobile"))),
 
-                ],
-                rows: List.generate(data.length, (index) {
-                  final b = data[index]["customerTag"];
-                  final d = data[index]["customerName"];
-                  return DataRow(cells: [
-                    DataCell(Container(child: Text(b))),
-                    DataCell(Container(child: Text("$d"))),
-
-
-                  ]);
-                }),
+                    ]);
+                  }),
+                ),
               ),
             ),
-          ),
+          ), Container(
+            color: Colors.blue,
+            height: 38,
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children:
+
+                [ Text(
+                    'اجمالي عدد العملاء',
+                    style: TextStyle(
+
+                        fontSize: 15, fontWeight: FontWeight.bold)
+                ),
+                  VerticalDivider(color: Colors.black,thickness: 2,),
+                  Text("${data.length}"),
+                ]),
+          )
         ],
       ),
     );
