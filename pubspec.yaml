@@ -16,21 +16,21 @@ dependencies:
   cupertino_icons: ^1.0.2
   sqflite: ^2.0.3+1
   hive: ^2.2.3
-  http: ^0.13.5
+  http: ^1.0.0
   hive_flutter: ^1.1.0
   path_provider: ^2.0.11
   connectivity:
   data_connection_checker_nulls: ^0.0.2
   flutter_easyloading:
-  flutter_launcher_icons: ^0.10.0
+  flutter_launcher_icons:
   provider: ^6.0.3
-  intl: ^0.17.0
+  intl:
   search_choices: ^2.1.4
   flutter_barcode_scanner: ^2.0.0
-  blue_thermal_printer: ^1.2.3
+  #blue_thermal_printer: ^1.2.3
   dropdown_search: ^5.0.3
   dropdown_plus: ^0.0.9
-  printing: ^5.9.3
+  printing:
   shared_preferences:
   date_format: ^2.0.7
   quantity_input: ^1.0.2
@@ -38,6 +38,10 @@ dependencies:
   url_launcher: ^6.1.11
   auto_size_text: ^3.0.0
   flip_card: ^0.7.0
+  esc_pos_bluetooth: ^0.4.1
+  esc_pos_utils: ^1.1.0
+  flutter_bluetooth_basic:
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

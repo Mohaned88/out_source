@@ -111,7 +111,7 @@ class _RegState extends State<Reg> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Image.asset('assets/images/login_icon.jpg',
-                              color: AppColors.mainColor,
+                              color: AppColors.kMainColor,
                               width: width*0.5,
                               height: width*0.5,
                             ),
@@ -161,7 +161,7 @@ class _RegState extends State<Reg> {
                               padding: EdgeInsets.all(width * 0.02),
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.mainColor,
+                                  backgroundColor: AppColors.kMainColor,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(width * 0.2),
                                   ),

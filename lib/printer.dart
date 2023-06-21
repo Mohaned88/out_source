@@ -1,14 +1,23 @@
-import 'dart:typed_data';
+// import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'dart:async';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
-import 'package:printing/printing.dart';
+import 'package:flutter_bluetooth_basic/flutter_bluetooth_basic.dart';
+//import 'package:flutter_bluetooth_basic/flutter_bluetooth_basic.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+// import 'package:flutter/services.dart';
+// import 'package:flutter_bluetooth_basic/flutter_bluetooth_basic.dart';
+import 'dart:async';
+
+// import 'package:pdf/pdf.dart';
+// import 'package:pdf/widgets.dart' as pw;
+// import 'package:printing/printing.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 import 'controller.dart';
 import 'databasehelper.dart';
 import 'resources/constants.dart';
+import 'package:esc_pos_bluetooth/esc_pos_bluetooth.dart';
+import 'package:esc_pos_utils/esc_pos_utils.dart';
 
 class Printer extends StatefulWidget {
   int id;
@@ -20,14 +29,42 @@ class Printer extends StatefulWidget {
 }
 
 class _PrinterState extends State<Printer> {
-  // BlueThermalPrinter bluetooth = BlueThermalPrinter.instance;
-  //
-  // List<BluetoothDevice> _devices = [];
-  // BluetoothDevice? _device;
-  // bool _connected = false;
+ BluetoothManager bluetoothManager = BluetoothManager.instance;
+  PrinterBluetoothManager _printerManager = PrinterBluetoothManager();
+
+  //BluetoothDevice _device;
+  List<PrinterBluetooth> _devices = [];
+  String? _devicesMsg;
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+  void initPrinter() {
+    _printerManager.startScan(Duration(seconds: 5));
+    _printerManager.scanResults.listen((val) {
+      if (!mounted) return;
+      setState(() => _devices = val);
+      if (_devices.isEmpty) {
+        setState(() => _devicesMsg = 'No Devices');
+      }
+    });
+  }
 
   @override
   void initState() {
+    //initPrinter();
+    bluetoothManager.state.listen((val) {
+      if (!mounted) return;
+      if(val == 12){
+        print('on');
+        initPrinter();
+      }
+      else if(val ==10){
+        print('off');
+        setState(() {
+          _devicesMsg = 'Bluetooth Disconnected!';
+        });
+      }
+    });
     super.initState();
     billDetList();
     billList().then((value) => setState(list = value));
@@ -44,7 +81,7 @@ class _PrinterState extends State<Printer> {
       loading3 = false;
     });
     sum = 0.0;
-    for(int i = 0; i< list3.length;i++){
+    for (int i = 0; i < list3.length; i++) {
       sum += double.tryParse(list3[i]["total"].toString()) as double;
     }
     print(list3);
@@ -70,6 +107,7 @@ class _PrinterState extends State<Printer> {
     return ff;
   }
 
+/*
   Future<Uint8List> _generatePdf(
     PdfPageFormat format,
   ) async {
@@ -368,9 +406,163 @@ class _PrinterState extends State<Printer> {
 
     return pdf.save();
   }
+*/
 
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('esc_pos_bluetooth'),
+      ),
+      body: _devices.isEmpty
+          ? Center(
+              child: Text(_devicesMsg ?? ''),
+            )
+          : ListView.builder(
+              itemBuilder: (context, index) {
+                return ListTile(
+                    leading: Icon(Icons.print),
+                    title: Text(_devices[index].name!),
+                    subtitle: Text(_devices[index].address!),
+                    onTap: () {
+                      //////////////
+                      _startPrinter(_devices[index]);
+                    });
+              },
+            ),
+    );
+  }
+
+  Future<void> _startPrinter(PrinterBluetooth printer) async {
+    _printerManager.selectPrinter(printer);
+    final result = await _printerManager.printTicket(await _ticket(PaperSize.mm80));
+    showDialog(context: context, builder: (_)=> AlertDialog(
+      content: Text(result.msg),
+    ),);
+  }
+
+  Future<List<int>> _ticket(PaperSize paper) async {
+    final profile = await CapabilityProfile.load();
+    final Generator ticket = Generator(paper, profile);
+    final prefs = await SharedPreferences.getInstance();
+    final formatter = DateFormat('MM/dd/yyyy H:m');
+    final String timestamp = formatter.format(list[0]["bill_date"]);
+    List<int> bytes = [];
+    bytes += ticket.row([
+      PosColumn(
+        text: AppConstants.customerCompName,
+        width: 2,
+        styles: PosStyles(
+          align: PosAlign.center,
+          height: PosTextSize.size2,
+          width: PosTextSize.size2,
+        ),
+      ),
+      PosColumn(
+        text: '$timestamp التاريخ: \n ',
+        width: 2,
+        styles: PosStyles(align: PosAlign.right),
+      ),
+    ]);
+    //////////////////////////////////////////
+    bytes += ticket.row([
+      PosColumn(
+        text: list[0]['bill_id'],
+        width: 2,
+        styles: PosStyles(align: PosAlign.left),
+      ),
+      PosColumn(
+        text: 'رقم الفتورة',
+        width: 2,
+        styles: PosStyles(align: PosAlign.right),
+      ),
+    ]);
+    bytes += ticket.row([
+      PosColumn(
+        text: prefs.getString('mandoub_name') ?? '',
+        width: 2,
+        styles: PosStyles(align: PosAlign.left),
+      ),
+      PosColumn(
+        text: "اسم المندوب ",
+        width: 2,
+        styles: PosStyles(align: PosAlign.right),
+      ),
+    ]);
+    bytes += ticket.row([
+      PosColumn(
+        text: list[0]['orgName'],
+        width: 2,
+        styles: PosStyles(align: PosAlign.left),
+      ),
+      PosColumn(
+        text: "اسم العميل ",
+        width: 2,
+        styles: PosStyles(align: PosAlign.right),
+      ),
+    ]);
+    /////////////////////////////////////
+    bytes += ticket.hr();
+    bytes += ticket.row([
+      PosColumn(text: 'Code', width: 2),
+      PosColumn(text: 'Name', width: 5),
+      PosColumn(
+          text: 'Price', width: 2, styles: PosStyles(align: PosAlign.right)),
+      PosColumn(
+          text: 'Qty', width: 2, styles: PosStyles(align: PosAlign.right)),
+      PosColumn(
+          text: 'Total', width: 2, styles: PosStyles(align: PosAlign.right)),
+    ]);
+    bytes += ticket.hr();
+    //////////////////////////////////////
+    for(int i=0;i < list3.length;i++){
+      bytes += ticket.row([
+        PosColumn(text: list3[i]["itemId"].toString(), width: 2),
+        PosColumn(text:  list3[i]["Item_Name"].toString(), width: 5),
+        PosColumn(
+            text: list3[i]["price"].toString(), width: 2, styles: PosStyles(align: PosAlign.right)),
+        PosColumn(
+            text: list3[i]["unit1Quant"].toString(), width: 2, styles: PosStyles(align: PosAlign.right)),
+        PosColumn(
+            text:  list3[i]["total"].toString(), width: 2, styles: PosStyles(align: PosAlign.right)),
+      ]);
+    }
+    bytes += ticket.hr();
+    bytes += ticket.hr();
+    ///////////////////////////////////
+    bytes += ticket.row([
+      PosColumn(text: '$sum', width: 6,
+          styles: PosStyles(
+            height: PosTextSize.size2,
+            width: PosTextSize.size2,
+            align: PosAlign.left,
+          )),
+      PosColumn(text:  'الاجمالى:', width: 6,
+          styles: PosStyles(
+            height: PosTextSize.size2,
+            width: PosTextSize.size2,
+            align: PosAlign.right,
+          )),
+    ]);
+    bytes += ticket.hr();
+    bytes += ticket.feed(2);
+    ticket.cut();
+    return bytes;
+
+    /*final profile = await CapabilityProfile.load();
+    final generator = Generator(PaperSize.mm80, profile);
+    return generator;*/
+  }
+
+  @override
+  void dispose() {
+    _printerManager.stopScan();
+    super.dispose();
+  }
+}
+
+/*
+* Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
@@ -462,59 +654,4 @@ class _PrinterState extends State<Printer> {
       ),
     );
   }
-
-// List<DropdownMenuItem<BluetoothDevice>> _getDeviceItems() {
-//   List<DropdownMenuItem<BluetoothDevice>> items = [];
-//   if (_devices.isEmpty) {
-//     items.add(DropdownMenuItem(
-//       child: Text('NONE'),
-//     ));
-//   } else {
-//     _devices.forEach((device) {
-//       items.add(DropdownMenuItem(
-//         child: Text(device.name ?? ""),
-//         value: device,
-//       ));
-//     });
-//   }
-//   return items;
-// }
-
-// void _connect() {
-//   if (_device != null) {
-//     bluetooth.isConnected.then((isConnected) {
-//       if (isConnected == true) {
-//         bluetooth.connect(_device!).catchError((error) {
-//           setState(() => _connected = false);
-//         });
-//         setState(() => _connected = true);
-//       }
-//     });
-//   } else {
-//     show('No device selected.');
-//   }
-// }
-//
-// void _disconnect() {
-//   bluetooth.disconnect();
-//   setState(() => _connected = false);
-// }
-
-// Future show(
-//     String message, {
-//       Duration duration: const Duration(seconds: 3),
-//     }) async {
-//   await new Future.delayed(new Duration(milliseconds: 100));
-//   ScaffoldMessenger.of(context).showSnackBar(
-//     new SnackBar(
-//       content: new Text(
-//         message,
-//         style: new TextStyle(
-//           color: Colors.white,
-//         ),
-//       ),
-//       duration: duration,
-//     ),
-//   );
-// }
-}
+* */
