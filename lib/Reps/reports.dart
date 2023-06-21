@@ -305,7 +305,7 @@ class _ReportsState extends State<Reports> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: AppColors.kMainColor,
+          backgroundColor: AppColors.mainColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
               bottomRight: Radius.circular(w * 0.1),

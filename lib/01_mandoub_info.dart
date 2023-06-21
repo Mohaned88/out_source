@@ -23,7 +23,7 @@ class _InfoState extends State<Info> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: AppColors.kMainColor,
+        backgroundColor: AppColors.mainColor,
         appBar: AppBar(
           title: Text(
             "بيانات المندوب ",
@@ -34,7 +34,7 @@ class _InfoState extends State<Info> {
               fontFamily: 'GE SS Two',
             ),
           ),
-          backgroundColor: AppColors.kMainColor,
+          backgroundColor: AppColors.mainColor,
           elevation: 0,
           leading: IconButton(
             onPressed: () {
@@ -59,7 +59,7 @@ class _InfoState extends State<Info> {
                 Container(
                   width: w*0.5,
                   decoration: BoxDecoration(
-                    color: AppColors.kMainColor.withOpacity(0.1),
+                    color: AppColors.mainColor.withOpacity(0.1),
                     borderRadius: BorderRadius.only(
                       topRight: Radius.circular(w * 0.1),
                     ),

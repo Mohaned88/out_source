@@ -36,11 +36,11 @@ class LinkPreviewComp extends StatelessWidget {
           height: w*0.11,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: AppColors.kMainColor.withOpacity(0.3),
+            color: AppColors.mainColor.withOpacity(0.3),
           ),
           child: Icon(
             Icons.note_add_outlined,
-            color: AppColors.kMainColor,
+            color: AppColors.mainColor,
           ),
         ),
         trailing: Directionality(

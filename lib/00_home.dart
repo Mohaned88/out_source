@@ -292,7 +292,7 @@ class _LoginState extends State<Login> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        backgroundColor: AppColors.kMainColor,
+        backgroundColor: AppColors.mainColor,
         toolbarHeight: w * 0.2,
         automaticallyImplyLeading: false,
         scrolledUnderElevation: 10,

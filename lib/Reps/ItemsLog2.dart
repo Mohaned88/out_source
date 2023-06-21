@@ -83,7 +83,7 @@ class _ItemsLogState extends State<ItemsLog> {
         child: CustomScrollView(
           slivers: [
             SliverAppBar(
-              backgroundColor: AppColors.kMainColor,
+              backgroundColor: AppColors.mainColor,
               title: Text(
                 "حركة صنف",
                 textDirection: TextDirection.rtl,
@@ -113,7 +113,7 @@ class _ItemsLogState extends State<ItemsLog> {
                             onEmptyActionPressed: () async {},
                             decoration: InputDecoration(
                               filled: true,
-                              fillColor: AppColors.kMainColor.withOpacity(0.4),
+                              fillColor: AppColors.mainColor.withOpacity(0.4),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(w*0.5),
                                   borderSide: BorderSide(
@@ -195,7 +195,7 @@ class _ItemsLogState extends State<ItemsLog> {
                             color: Colors.white,
                           ),
                           child: FloatingActionButton(
-                            backgroundColor: AppColors.kMainColor.withOpacity(0.4),
+                            backgroundColor: AppColors.mainColor.withOpacity(0.4),
                             elevation: 0,
                             onPressed: (){
                               setState(() {
@@ -212,7 +212,7 @@ class _ItemsLogState extends State<ItemsLog> {
                             },
                             child: Icon(
                               Icons.send,
-                              color: AppColors.kMainColor,
+                              color: AppColors.mainColor,
                               size: w*0.09,
                             ),
                           ),
@@ -235,7 +235,7 @@ class _ItemsLogState extends State<ItemsLog> {
                         border: TableBorder.all(),
                         columnSpacing: 38.0,
                         headingRowColor: MaterialStateProperty.all<Color>(
-                            AppColors.kMainColor.withOpacity(0.3),),
+                            AppColors.mainColor.withOpacity(0.3),),
                         columns: [
                           DataColumn(label: Text('نوع')),
                           DataColumn(label: Text('تاريخ')),

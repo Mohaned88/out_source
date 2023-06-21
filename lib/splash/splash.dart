@@ -33,7 +33,7 @@ class Splash extends StatelessWidget {
 
     );
     return Scaffold(
-      backgroundColor: AppColors.kMainColor,
+      backgroundColor: AppColors.mainColor,
       body: Container(
         width: w,
         height: h,
