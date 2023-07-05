@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dy_app/resources/colors.dart';
 import 'package:flutter/services.dart';
 
 import 'package:http/http.dart' as http;
@@ -24,92 +25,6 @@ class _IndebtednessRepShowState extends State<IndebtednessRepShow> {
     super.initState();
   }
 
-  // Future<Uint8List> _generatePdf(
-  //   PdfPageFormat format,
-  // ) async {
-  //   final pdf = pw.Document(
-  //     version: PdfVersion.pdf_1_5,
-  //     compress: true,
-  //   );
-  //   var data1 = await rootBundle.load("assets/fonts/Cairo-Black.ttf");
-  //   final ttf = pw.Font.ttf(data1);
-  //   pdf.addPage(
-  //     pw.Page(
-  //       pageFormat: format,
-  //       build: (context) {
-  //         return pw.Table(
-  //             defaultColumnWidth: pw.FixedColumnWidth(200.0),
-  //             border: pw.TableBorder.all(
-  //                 color: PdfColor.fromInt(23323),
-  //                 style: pw.BorderStyle.solid,
-  //                 width: 1),
-  //             children: [
-  //               pw.TableRow(children: [
-  //                 pw.Column(children: [
-  //                   pw.Column(children: [
-  //                     pw.Text('كود العميل', style:
-  //         pw.TextStyle(fontSize: 12, font: ttf),
-  //             textDirection: pw.TextDirection.rtl),
-  //                   ]),
-  //                   for (var i = 0; i < data.length; i++)
-  //                     pw.Column(children: [
-  //                       pw.Text(data[i]["orgId"].toString(),
-  //                           style: pw.TextStyle(fontSize: 13, font: ttf),
-  //                           textDirection: pw.TextDirection.rtl),
-  //                       pw.Divider(thickness: 1)
-  //                     ])
-  //                 ]),
-  //                 pw.Column(children: [
-  //                   pw.Column(children: [
-  //                     pw.Text('اسم العميل', style:
-  //                     pw.TextStyle(fontSize: 12, font: ttf),
-  //                         textDirection: pw.TextDirection.rtl),
-  //                   ]),
-  //                   pw.Column(children: [
-  //                     for (var x = 0; x < data.length; x++)
-  //                       pw.Text(data[x]["customerName"].toString(),
-  //                           style: pw.TextStyle(fontSize: 13, font: ttf),
-  //                           textDirection: pw.TextDirection.rtl),
-  //                     pw.Divider(thickness: 1)
-  //                   ])
-  //                 ]),
-  //                 pw.Column(children: [
-  //                   pw.Column(children: [
-  //                     pw.Text('مدين',
-  //                         style: pw.TextStyle(fontSize: 12, font: ttf),
-  //                         textDirection: pw.TextDirection.rtl),
-  //                   ]),
-  //                   pw.Column(children: [
-  //                     for (var x = 0; x < data.length; x++)
-  //                       pw.Text(data[x]["totalCreditor"].toString(),
-  //                           style: pw.TextStyle(fontSize: 13, font: ttf),
-  //                           textDirection: pw.TextDirection.rtl),
-  //                     pw.Divider(thickness: 1)
-  //                   ])
-  //                 ]),
-  //                 pw.Column(children: [
-  //                   pw.Column(children: [
-  //                     pw.Text('دائن',
-  //                         style: pw.TextStyle(fontSize: 12, font: ttf),
-  //                         textDirection: pw.TextDirection.rtl),
-  //                   ]),
-  //                   pw.Column(children: [
-  //                     for (var x = 0; x < data.length; x++)
-  //                       pw.Text(data[x]["totalDebtor"].toString(),
-  //                           style: pw.TextStyle(fontSize: 13, font: ttf),
-  //                           textDirection: pw.TextDirection.rtl),
-  //                     pw.Divider(thickness: 1)
-  //                   ])
-  //                 ]),
-  //               ]),
-  //             ]);
-  //       },
-  //     ),
-  //   );
-  //
-  //   return pdf.save();
-  // }
-
   @override
   // Calculate the total values for each column
   Widget build(BuildContext context) {
@@ -132,116 +47,167 @@ class _IndebtednessRepShowState extends State<IndebtednessRepShow> {
                 ((double.tryParse(current["totalCreditor"]) ?? 0.0) -
                     (double.tryParse(current["totalDebtor"]) ?? 0.0))) ??
         0;
-    return SafeArea(
-      child: Column(
-        children: [
-          Container(
-            color: Colors.blue,
-            height: 38,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
 
-              children: [Text("العميل "),Text("مسحوبات"),Text("المرتجعات "),Text("الصافي")],),
+    ///update 30/6/2023///
+    var w = MediaQuery.of(context).size.width;
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: AppColors.mainColor,
+          title: Text(
+            'مديونيات عملاء المندوب',
+            textDirection: TextDirection.rtl,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'GE SS Two',
+              color: Colors.white,
+            ),
           ),
-          Expanded(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: DataTable(
-                border: TableBorder.all(),
-                columnSpacing: 38.0,
-                headingRowHeight: 0.0,
-                columns: [
-                  DataColumn(label: Text('العميل')),
-                  DataColumn(label: Text('مسحوبات')),
-                  DataColumn(label: Text('المرتجعات')),
-                  DataColumn(label: Text('الصافي')),
-                ],headingRowColor:  MaterialStateProperty.all<Color>(
-                  Colors.greenAccent),
-                rows: List.generate(data.length, (index) {
-                      final c = data[index]["customerName"];
-                      final d = double.tryParse(data[index]["totalCreditor"]);
-                      final e = double.tryParse(data[index]["totalDebtor"]);
-                      final x = d! - e!;
-                      return DataRow(cells: [
-                        DataCell(GestureDetector(
-                            onTap: () async {
-                              String tag = data[index]["orgId"];
+        ),
+        body: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: DataTable(
+                      border: TableBorder.all(),
+                      columnSpacing: w * 0.4,
+                      columns: [
+                        DataColumn(
+                          label: Text(
+                            'العميل',
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        DataColumn(
+                          label: Text(
+                            'الصافي',
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
+                      headingRowColor: MaterialStateProperty.all<Color>(
+                        AppColors.mainColor.withOpacity(0.3),
+                      ),
+                      rows: List.generate(
+                        data.length,
+                        (index) {
+                          final c = data[index]["customerName"];
+                          final x =
+                              double.tryParse(data[index]["totalCreditor"])! -
+                                  double.tryParse(data[index]["totalDebtor"])!;
+                          return DataRow(
+                            cells: [
+                              DataCell(
+                                GestureDetector(
+                                  onTap: () async {
+                                    String tag = data[index]["orgId"];
 
-                              final String url =
-                                  "http://sales.dynamicsdb2.com/api/GeneralDailyReport/$tag";
-                              var response = await http.get(Uri.parse(url),
-                                  headers: {"Accept": "application/json"});
-                              if (response.statusCode == 200) {
-                                print("Saving Data ");
-                                print(response.body);
-                              } else {
-                                print(response.statusCode);
-                              }
+                                    final String url =
+                                        "http://sales.dynamicsdb2.com/api/GeneralDailyReport/$tag";
+                                    var response = await http.get(
+                                      Uri.parse(url),
+                                      headers: {"Accept": "application/json"},
+                                    );
+                                    if (response.statusCode == 200) {
+                                      print("Saving Data ");
+                                      print(response.body);
+                                    } else {
+                                      print(response.statusCode);
+                                    }
 
-                              List jsonResponse = jsonDecode(response.body);
+                                    List jsonResponse =
+                                        jsonDecode(response.body);
 
-                              print("get Report");
-                              print(jsonResponse);
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (_) => GeneralDailyRepShow(
-                                          data: jsonResponse)));
-                            },
-                            child: Container(
-                                child: Text(
-                              c,
-                              style: TextStyle(
-                                  decoration: TextDecoration.underline,
-                                  color: Colors.blue),
-                            )))),
-                        DataCell(Container(child: Text("$d"))),
-                        DataCell(Container(child: Text("$e"))),
-                        DataCell(Container(child: Text("$x"))),
-                      ]);
-                     })
-//                     +
-//                     [
-// // Add a new DataRow with the total values for each column
-//                       DataRow(
-//                           cells: [
-//                             DataCell(Text(
-//                               'الإجمالي',
-//                               style: TextStyle(
-//                                   fontSize: 15, fontWeight: FontWeight.bold),
-//                             )),
-//                             DataCell(Text(totalCreditor.toStringAsFixed(2))),
-//                             DataCell(Text(totalDebtor.toStringAsFixed(2))),
-//                             DataCell(Text(totalNet.toStringAsFixed(2))),
-//                           ],
-//                           color: MaterialStateProperty.all<Color>(
-//                               Colors.greenAccent)),
-               //     ],
+                                    print("get Report");
+                                    print(jsonResponse);
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => GeneralDailyRepShow(
+                                          title: c,
+                                          data: jsonResponse,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: SizedBox(
+                                    width: double.infinity,
+                                    child: Text(
+                                      c,
+                                      textAlign: TextAlign.start,
+                                      style: TextStyle(
+                                        decoration: TextDecoration.underline,
+                                        color: Colors.blueAccent,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              DataCell(
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: Text(
+                                    "${x.toStringAsFixed(2)}",
+                                    textAlign: TextAlign.end,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
               ),
-            ),
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.mainColor,
+                  border: Border.all(
+                    width: 1.2,
+                    color: Colors.black,
+                  ),
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(w * 0.02),
+                    topLeft: Radius.circular(w * 0.02),
+                  ),
+                ),
+                height: w * 0.13,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Text(
+                      'الإجمالي',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
+                    ),
+                    VerticalDivider(
+                      color: Colors.black,
+                      thickness: 1.2,
+                    ),
+                    Text(
+                      totalNet.toStringAsFixed(2),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ],
+                ),
+              )
+            ],
           ),
-          Container(
-            color: Colors.blue,
-            height: 38,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children:
-
-            [ Text(
-              'الإجمالي',
-              style: TextStyle(
-
-                  fontSize: 15, fontWeight: FontWeight.bold)
-            ),
-              VerticalDivider(color: Colors.black,thickness: 2,),
-              Text(totalCreditor.toStringAsFixed(2)),
-              VerticalDivider(color: Colors.black,thickness: 2,),
-              Text(totalDebtor.toStringAsFixed(2)),
-              VerticalDivider(color: Colors.black,thickness: 2,),
-             Text(totalNet.toStringAsFixed(2)),],),
-          )
-        ],
+        ),
       ),
     );
+    ///end update 30/6/2023///
   }
 }

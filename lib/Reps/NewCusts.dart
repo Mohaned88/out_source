@@ -1,25 +1,13 @@
-
-
-
-
-
-
-
-
 ///10-6-2023
 
-
-
-import 'dart:typed_data';
 import 'package:flutter/services.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
-import 'package:printing/printing.dart';
 
 import 'package:flutter/material.dart';
 
+import '../resources/colors.dart';
+
 class NewCustsRepShow extends StatefulWidget {
-   NewCustsRepShow({Key? key,required this.data}) : super(key: key);
+  NewCustsRepShow({Key? key,required this.data}) : super(key: key);
   List data;
   @override
   State<NewCustsRepShow> createState() => _NewCustsRepShowState();
@@ -36,130 +24,109 @@ class _NewCustsRepShowState extends State<NewCustsRepShow> {
     print(data);
     super.initState();
   }
-  // Future<Uint8List> _generatePdf(
-  //     PdfPageFormat format,
-  //     ) async {
-  //   final pdf = pw.Document(
-  //     version: PdfVersion.pdf_1_5,
-  //     compress: true,
-  //   );
-  //   var data1 = await rootBundle.load("assets/fonts/Cairo-Black.ttf");
-  //   final ttf = pw.Font.ttf(data1);
-  //   pdf.addPage(
-  //     pw.Page(
-  //       pageFormat: format,
-  //       build: (context) {
-  //         return pw.Table(
-  //             defaultColumnWidth: pw.FixedColumnWidth(200.0),
-  //             border: pw.TableBorder.all(
-  //                 color: PdfColor.fromInt(23323),
-  //                 style: pw.BorderStyle.solid,
-  //                 width: 1),
-  //             children: [
-  //               pw.TableRow(children: [
-  //                 pw.Column(children: [
-  //                   pw.Column(children: [
-  //                     pw.Text('كود العميل', style:
-  //                     pw.TextStyle(fontSize: 12, font: ttf),
-  //                         textDirection: pw.TextDirection.rtl),
-  //                   ]),
-  //                   for (var i = 0; i < data.length; i++)
-  //                     pw.Column(children: [
-  //                       pw.Text(data[i]["customerTag"].toString(),
-  //                           style: pw.TextStyle(fontSize: 13, font: ttf),
-  //                           textDirection: pw.TextDirection.rtl),
-  //                       pw.Divider(thickness: 1)
-  //                     ])
-  //                 ]),
-  //                 pw.Column(children: [
-  //                   pw.Column(children: [
-  //                     pw.Text('اسم العميل', style:
-  //                     pw.TextStyle(fontSize: 12, font: ttf),
-  //                         textDirection: pw.TextDirection.rtl),
-  //                   ]),
-  //                   pw.Column(children: [
-  //                     for (var x = 0; x < data.length; x++)
-  //                       pw.Text(data[x]["customerName"].toString(),
-  //                           style: pw.TextStyle(fontSize: 13, font: ttf),
-  //                           textDirection: pw.TextDirection.rtl),
-  //                     pw.Divider(thickness: 1)
-  //                   ])
-  //                 ]),
-  //               ]),
-  //             ]);
-  //       },
-  //     ),
-  //   );
-  //
-  //   return pdf.save();
-  // }
 
-
+  ///update 1/7/2023///
   @override
   Widget build(BuildContext context) {
-
-    return   SafeArea(
-      child: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: DataTable(
-                  border: TableBorder.all(),
-                  columnSpacing: 30.0,
-                  columns: [
-                    DataColumn(label: Text('كود العميل')),
-                    DataColumn(label: Text('اسم العميل')),
-                    DataColumn(label: Text('عنوان العميل')),
-                    DataColumn(label: Text('تليفون العميل')),
-                  ],
-                  rows: List.generate(data.length, (index) {
-                    final b = data[index]["customerTag"];
-                    final d = data[index]["customerName"];
-                    final address = data[index]["address"];
-                    final mobile = data[index]["mobile"];
-                    return DataRow(cells: [
-                      DataCell(Container(child: Text(b))),
-                      DataCell(Container(child: Text("$d"))),
-                      DataCell(Container(child: Text("$address"))),
-                      DataCell(Container(child: Text("$mobile"))),
-
-                    ]);
-                  }),
+    var w = MediaQuery.of(context).size.width;
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: AppColors.mainColor,
+          title: Text(
+            "العملاء الجدد",
+            textDirection: TextDirection.rtl,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'GE SS Two',
+              color: Colors.white,
+            ),
+          ),
+        ),
+        body: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: DataTable(
+                      columnSpacing: w * 0.1,
+                      headingRowColor: MaterialStateProperty.all<Color>(
+                        AppColors.mainColor.withOpacity(0.3),
+                      ),
+                      border: TableBorder.all(),
+                      columns: [
+                        DataColumn(label: Text('كود العميل')),
+                        DataColumn(label: Text('اسم العميل')),
+                        DataColumn(label: Text('عنوان العميل')),
+                        DataColumn(label: Text('تليفون العميل')),
+                      ],
+                      rows: List.generate(data.length, (index) {
+                        final b = data[index]["customerTag"];
+                        final d = data[index]["customerName"];
+                        final address = data[index]["address"];
+                        final mobile = data[index]["mobile"];
+                        return DataRow(cells: [
+                          DataCell(Container(child: Text(b))),
+                          DataCell(Container(child: Text("$d"))),
+                          DataCell(Container(child: Text("$address"))),
+                          DataCell(Container(child: Text("$mobile"))),
+                        ]);
+                      }),
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ), Container(
-            color: Colors.blue,
-            height: 38,
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children:
-
-                [ Text(
-                    'اجمالي عدد العملاء',
-                    style: TextStyle(
-
-                        fontSize: 15, fontWeight: FontWeight.bold)
+              Container(
+                height: w * 0.1,
+                decoration: BoxDecoration(
+                  color: AppColors.mainColor,
+                  border: Border.all(
+                    color: Colors.black,
+                    width: 1.2,
+                  ),
                 ),
-                  VerticalDivider(color: Colors.black,thickness: 2,),
-                  Text("${data.length}"),
-                ]),
-          )
-        ],
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'اجمالي عدد العملاء',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 17,
+                            fontFamily: 'GE SS Two',
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      VerticalDivider(
+                        color: Colors.black,
+                        thickness: 2,
+                      ),
+                      Expanded(
+                        child: Text(
+                          "${data.length}",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 17,
+                            fontFamily: 'GE SS Two',
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ]),
+              )
+            ],
+          ),
+        ),
       ),
     );
-    // return MaterialApp(
-    //   home: Scaffold(
-    //     appBar: AppBar(
-    //       title: Text('العملاء الجدد'),
-    //     ),
-    //     body: PdfPreview(
-    //       build: (format) => _generatePdf(format),
-    //     ),
-    //   ),
-    // );
   }
+  ///end update 1/7/2023///
 }

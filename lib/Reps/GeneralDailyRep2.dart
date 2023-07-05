@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../dailySafe.dart';
+import '../resources/colors.dart';
 
 
 class GeneralDailyShow extends StatefulWidget {
@@ -79,103 +80,182 @@ class _GeneralDailyShowState extends State<GeneralDailyShow> {
     });
     super.initState();
   }
+
+  ///update 30/6/2023///
   @override
   Widget build(BuildContext context) {
-    return   SafeArea(
-      child: Column(
-        children: [
-          DropdownFormField(
-            onEmptyActionPressed: () async {},
-            decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                suffixIcon: Icon(Icons.arrow_drop_down),
-                labelText: "عميل "),
-            onSaved: (dynamic str) {},
-            onChanged: (dynamic str) {print(str["org_ID"]);
-            _mySelection=str["org_ID"].toString();
-            ;},
-
-
-            displayItemFn: (dynamic item) => Text(
-              (item ?? {})['orgName'] ?? '',
-              style: TextStyle(fontSize: 16),
+    var w = MediaQuery.of(context).size.width;
+    return   Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: AppColors.mainColor,
+          title: Text(
+            'تفاصيل معاملات عميل محدد',
+            textDirection: TextDirection.rtl,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'GE SS Two',
+              color: Colors.white,
             ),
-            findFn: (dynamic str) async => list2,
-            selectedFn: (dynamic item1, dynamic item2) {
-              if (item1 != null && item2 != null) {
-                return item1['orgName'] == item2['orgName'];
-              }
-              return false;
-            },
-            filterFn: (dynamic item, str) =>
-            item['orgName'].toLowerCase().indexOf(str.toLowerCase()) >= 0,
-            dropdownItemFn: (dynamic item, int position, bool focused,
-                bool selected, Function() onTap) {
-
-              return ListTile(
-
-                title: Text(item['orgName']),
-                subtitle: Text(
-                  item['org_ID'].toString(),
-                ),selected: false,
-
-                tileColor:
-                focused ? Color.fromARGB(20, 0, 0, 0) : Colors.transparent,
-                onTap: onTap,
-              );
-            },),
-          ElevatedButton(onPressed: (){GetGeneralDailyData();}, child: Text("عرض")),
-
-          Container(
-            color: Colors.blue,
-            height: 38,
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          ),
+          bottom: PreferredSize(
+            preferredSize: Size(double.infinity, w * .19),
+            child: Container(
+              margin: EdgeInsets.only(bottom: w * 0.02),
+              padding: EdgeInsets.symmetric(horizontal: w * 0.02),
+              child: Row(
                 children: [
-                  Text('الرصيد '),
-                  Text('عليه'),
-                  Text('   له   '),
-                  Text( 'تاريخ المعامله'),
-                  Text('شرح المعامله        '),
-                ]),
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              physics: ScrollPhysics(),
-              child: DataTable(
-                border: TableBorder.all(),
-                columnSpacing: 10.0,
-                dataRowHeight: 100.0,
-                headingRowHeight: 0,
-                columns: [
-                  DataColumn(label: Text('الرصيد')),
-                  DataColumn(label: Text('عليه')),
-                  DataColumn(label: Text('له')),
-                  DataColumn(label: Text('تاريخ المعامله')),
-                  DataColumn(label: Text('شرح المعامله')),
-                ],
-                rows: List.generate(data.length, (index) {
-                  final b = data[index]["qedId"];
-                  final d =data[index]["from"];
-                  final e = data[index]["to"];
-                  final f = data?[index]["qeddate"].toString().substring(0,10);
-                  final g = data[index]["sharh"];
-                  final x= double.tryParse(data[index]["balance"].toString())?.round()??0;
-                  return DataRow(cells: [
-                    DataCell(Container(child: Text("$x"))),
-                    DataCell(Container(child: Text("$d"))),
-                    DataCell(Container( child: Text("$e"))),
-                    DataCell(Container( child: Text("$f"))),
-                    DataCell(Container( child: Text("$g"))),
-                  ]);
-                }),
-              ),
+                  Expanded(
+                    child: Container(
+                      width: double.infinity,
+                      height: w * 0.154,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(w * 0.5),
+                          color: Colors.white),
+                      child: DropdownFormField(
+                        onEmptyActionPressed: () async {},
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: AppColors.mainColor.withOpacity(0.4),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(w * 0.5),
+                            borderSide: BorderSide(
+                              color: Colors.transparent,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(w * 0.5),
+                            borderSide: BorderSide(
+                              color: Colors.white,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(w * 0.5),
+                            borderSide: BorderSide(
+                              color: Colors.white,
+                            ),
+                          ),
+                          suffixIcon: Icon(Icons.arrow_drop_down),
+                          labelText: "عميل",
+                          labelStyle: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                          ),
+                        ),
+                        onSaved: (dynamic str) {},
+                        onChanged: (dynamic str) {print(str["org_ID"]);
+                        _mySelection=str["org_ID"].toString();
+                        ;},
 
+
+                        displayItemFn: (dynamic item) => Text(
+                          (item ?? {})['orgName'] ?? '',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        findFn: (dynamic str) async => list2,
+                        selectedFn: (dynamic item1, dynamic item2) {
+                          if (item1 != null && item2 != null) {
+                            return item1['orgName'] == item2['orgName'];
+                          }
+                          return false;
+                        },
+                        filterFn: (dynamic item, str) =>
+                        item['orgName'].toLowerCase().indexOf(str.toLowerCase()) >= 0,
+                        dropdownItemFn: (dynamic item, int position, bool focused,
+                            bool selected, Function() onTap) {
+
+                          return ListTile(
+
+                            title: Text(item['orgName']),
+                            subtitle: Text(
+                              item['org_ID'].toString(),
+                            ),selected: false,
+
+                            tileColor:
+                            focused ? Color.fromARGB(20, 0, 0, 0) : Colors.transparent,
+                            onTap: onTap,
+                          );
+                        },),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(w * 0.02),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white,
+                      ),
+                      child: FloatingActionButton(
+                        backgroundColor:
+                        AppColors.mainColor.withOpacity(0.4),
+                        elevation: 0,
+                        onPressed: () {
+                          setState(() {
+                            GetGeneralDailyData();
+                          });
+                        },
+                        child: Icon(
+                          Icons.send,
+                          color: AppColors.mainColor,
+                          size: w * 0.09,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-        ],
+        ),
+        body: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    physics: ScrollPhysics(),
+                    child: DataTable(
+                      border: TableBorder.all(),
+                      columnSpacing: w*0.1,
+                      headingRowColor: MaterialStateProperty.all<Color>(
+                        AppColors.mainColor.withOpacity(0.3),
+                      ),
+                      columns: [
+                        DataColumn(label: Text('الرصيد',textAlign: TextAlign.center,)),
+                        DataColumn(label: Text('عليه',textAlign: TextAlign.center,)),
+                        DataColumn(label: Text('له',textAlign: TextAlign.center,)),
+                        DataColumn(label: Text('تاريخ المعامله',textAlign: TextAlign.center,)),
+                        DataColumn(label: Text('شرح المعامله',textAlign: TextAlign.center,)),
+                      ],
+                      rows: List.generate(data.length, (index) {
+                        final b = data[index]["qedId"];
+                        final d =data[index]["from"];
+                        final e = data[index]["to"];
+                        final f = data?[index]["qeddate"].toString().substring(0,10);
+                        final g = data[index]["sharh"];
+                        final x= double.tryParse(data[index]["balance"].toString())?.round()??0;
+                        return DataRow(cells: [
+                          DataCell(SizedBox( child: Text("$x"))),
+                          DataCell(SizedBox( child: Text("$d"))),
+                          DataCell(SizedBox( child: Text("$e"))),
+                          DataCell(SizedBox( child: Text("$f"))),
+                          DataCell(SizedBox( width: w*0.3, child: Text("$g"))),
+                        ]);
+                      }),
+                    ),
+
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
+  ///end update 30/6/2023///
 }

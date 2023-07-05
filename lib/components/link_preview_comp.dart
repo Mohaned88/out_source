@@ -1,14 +1,18 @@
 import 'package:dy_app/resources/colors.dart';
 import 'package:flutter/material.dart';
 
+///update 1/7/2023///
+
 class LinkPreviewComp extends StatelessWidget {
   final String? title;
   final GestureTapCallback? onTap;
+  final String? iconPath;
 
   const LinkPreviewComp({
     super.key,
     this.title,
     this.onTap,
+    this.iconPath,
   });
 
   @override
@@ -38,10 +42,11 @@ class LinkPreviewComp extends StatelessWidget {
             shape: BoxShape.circle,
             color: AppColors.mainColor.withOpacity(0.3),
           ),
-          child: Icon(
+          padding: iconPath == null? EdgeInsets.all(0): EdgeInsets.all(w*0.02),
+          child: iconPath == null ? Icon(
             Icons.note_add_outlined,
             color: AppColors.mainColor,
-          ),
+          ): Image.asset("$iconPath",color: AppColors.mainColor,),
         ),
         trailing: Directionality(
           textDirection: TextDirection.ltr,

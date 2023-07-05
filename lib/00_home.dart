@@ -12,7 +12,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'DailySafeDate.dart';
 import 'bill.dart';
 import 'cashIn.dart';
-import 'dailySafe.dart';
 import '01_mandoub_info.dart';
 import 'Reps/reports.dart';
 import 'results.dart';
@@ -98,11 +97,6 @@ class _LoginState extends State<Login> {
         _isButtonDisabledItem = true;
       });
       fetchSyncItemsData();
-      /*Future.delayed(Duration(seconds: 5), () {
-        setState(() {
-          _isButtonDisabledItem = false;
-        });
-      });*/
     }
   }
 
@@ -113,11 +107,6 @@ class _LoginState extends State<Login> {
         _isButtonDisabledTV = true;
       });
       fetchSyncTVData();
-     /* Future.delayed(Duration(seconds: 5), () {
-        setState(() {
-          _isButtonDisabledTV = false;
-        });
-      });*/
     }
   }
 
@@ -137,11 +126,6 @@ class _LoginState extends State<Login> {
               .showSnackBar(SnackBar(content: Text("No Internet")));
         }
       });
-      /*Future.delayed(Duration(seconds: 5), () {
-        setState(() {
-          _isButtonDisabledCash = false;
-        });
-      });*/
     }
   }
 
@@ -161,11 +145,6 @@ class _LoginState extends State<Login> {
               .showSnackBar(SnackBar(content: Text("No Internet")));
         }
       });
-      /*Future.delayed(Duration(seconds: 5), () {
-        setState(() {
-          _isButtonDisabledBill = false;
-        });
-      });*/
     }
   }
 
@@ -287,7 +266,6 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
     return Scaffold(
       resizeToAvoidBottomInset: false,

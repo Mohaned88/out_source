@@ -1,14 +1,16 @@
-///11-6-2023
+///update 1/7/2023///
 
 import 'dart:convert';
 import 'package:dropdown_plus/dropdown_plus.dart';
 import 'package:dy_app/Reps/Mas7obatRep2.dart';
 import 'package:dy_app/components/link_preview_comp.dart';
 import 'package:dy_app/resources/colors.dart';
+import 'package:dy_app/resources/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../databasehelper.dart';
+import '../resources/assets.dart';
 import 'DeneralDailyRep.dart';
 import 'GeneralDailyRep2.dart';
 import 'IndebtednessRep.dart';
@@ -102,7 +104,7 @@ class _ReportsState extends State<Reports> {
   Future GetAllMas7obatData() async {
     final prefs = await SharedPreferences.getInstance();
     final String url =
-        "http://sales.dynamicsdb2.com/api/Mas7obat/$_mySelection1";
+        "${AppConstants.mainApiLink}/api/Mas7obat/$_mySelection1";
     var response =
         await http.get(Uri.parse(url), headers: {"Accept": "application/json"});
     if (response.statusCode == 200) {
@@ -124,7 +126,7 @@ class _ReportsState extends State<Reports> {
     final prefs = await SharedPreferences.getInstance();
     double? tag = prefs.getDouble("tag");
     int? tagx = tag?.toInt();
-    final String url = "http://sales.dynamicsdb2.com/api/Indebtedness/$tagx";
+    final String url = "${AppConstants.mainApiLink}/api/Indebtedness/$tagx";
     var response =
         await http.get(Uri.parse(url), headers: {"Accept": "application/json"});
     if (response.statusCode == 200) {
@@ -147,7 +149,7 @@ class _ReportsState extends State<Reports> {
     int? store = prefs.getInt("store");
 
     final String url =
-        "http://sales.dynamicsdb2.com/api/TransLogReport?ItemID=$ItemCode&storeID=$store";
+        "${AppConstants.mainApiLink}/api/TransLogReport?ItemID=$ItemCode&storeID=$store";
     var response = await http
         .post(Uri.parse(url), headers: {"Accept": "application/json"});
     if (response.statusCode == 200) {
@@ -167,7 +169,7 @@ class _ReportsState extends State<Reports> {
   ///
   Future GetGeneralDailyData() async {
     final String url =
-        "http://sales.dynamicsdb2.com/api/GeneralDailyReport/$_mySelection";
+        "${AppConstants.mainApiLink}/api/GeneralDailyReport/$_mySelection";
     var response =
         await http.get(Uri.parse(url), headers: {"Accept": "application/json"});
     if (response.statusCode == 200) {
@@ -189,7 +191,7 @@ class _ReportsState extends State<Reports> {
     final prefs = await SharedPreferences.getInstance();
     double? tag = prefs.getDouble("tag");
     int? tagx = tag?.toInt();
-    final String url = "http://sales.dynamicsdb2.com/api/OnlyOne/$tagx";
+    final String url = "${AppConstants.mainApiLink}/api/OnlyOne/$tagx";
     var response =
         await http.get(Uri.parse(url), headers: {"Accept": "application/json"});
     if (response.statusCode == 200) {
@@ -211,7 +213,7 @@ class _ReportsState extends State<Reports> {
     final prefs = await SharedPreferences.getInstance();
     double? tag = prefs.getDouble("tag");
     int? tagx = tag?.toInt();
-    final String url = "http://sales.dynamicsdb2.com/api/DisContCust/$tagx";
+    final String url = "${AppConstants.mainApiLink}/api/DisContCust/$tagx";
     var response =
         await http.get(Uri.parse(url), headers: {"Accept": "application/json"});
     if (response.statusCode == 200) {
@@ -233,7 +235,7 @@ class _ReportsState extends State<Reports> {
     final prefs = await SharedPreferences.getInstance();
     double? tag = prefs.getDouble("tag");
     int? tagx = tag?.toInt();
-    final String url = "http://sales.dynamicsdb2.com/api/NewCusts/$tagx";
+    final String url = "${AppConstants.mainApiLink}/api/NewCusts/$tagx";
     var response =
         await http.get(Uri.parse(url), headers: {"Accept": "application/json"});
     if (response.statusCode == 200) {
@@ -255,7 +257,7 @@ class _ReportsState extends State<Reports> {
     final prefs = await SharedPreferences.getInstance();
     int? storeId = prefs.getInt("store");
     print(storeId);
-    final String url = "http://sales.dynamicsdb2.com/api/Inventory/$storeId";
+    final String url = "${AppConstants.mainApiLink}/api/Inventory/$storeId";
     var response =
         await http.get(Uri.parse(url), headers: {"Accept": "application/json"});
     if (response.statusCode == 200) {
@@ -278,7 +280,7 @@ class _ReportsState extends State<Reports> {
     double? tag = prefs.getDouble("safe_tag");
     int? tagx = tag?.toInt();
     final String url =
-        "http://sales.dynamicsdb2.com/api/GeneralDailyReport/$tagx";
+        "${AppConstants.mainApiLink}/api/GeneralDailyReport/$tagx";
     var response =
         await http.get(Uri.parse(url), headers: {"Accept": "application/json"});
     if (response.statusCode == 200) {
@@ -299,7 +301,6 @@ class _ReportsState extends State<Reports> {
 
   @override
   Widget build(BuildContext context) {
-    var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -331,6 +332,7 @@ class _ReportsState extends State<Reports> {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (_) => ItemsLog()));
               },
+              iconPath: AppAssets.repsIcon[0],
             ),
             //تعديل
             LinkPreviewComp(
@@ -339,6 +341,7 @@ class _ReportsState extends State<Reports> {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (_) => Mas7obatRepShow2()));
               },
+              iconPath: AppAssets.repsIcon[1],
             ),
             //تعديل
             LinkPreviewComp(
@@ -353,6 +356,7 @@ class _ReportsState extends State<Reports> {
                               IndebtednessRepShow(data: value)));
                 });
               },
+              iconPath: AppAssets.repsIcon[2],
             ),
             //تعديل
             LinkPreviewComp(
@@ -363,6 +367,7 @@ class _ReportsState extends State<Reports> {
                     MaterialPageRoute(
                         builder: (_) => GeneralDailyShow()));
               },
+              iconPath: AppAssets.repsIcon[3],
             ),
             //تعديل
             LinkPreviewComp(
@@ -376,6 +381,7 @@ class _ReportsState extends State<Reports> {
                           builder: (_) => OnlyOneRepShow(data: value)));
                 });
               },
+              iconPath: AppAssets.repsIcon[4],
             ),
             //تعديل
             LinkPreviewComp(
@@ -390,6 +396,7 @@ class _ReportsState extends State<Reports> {
                               DisContCustRepShow(data: value)));
                 });
               },
+              iconPath: AppAssets.repsIcon[5],
             ),
             //تعديل
             LinkPreviewComp(
@@ -403,6 +410,7 @@ class _ReportsState extends State<Reports> {
                           builder: (_) => NewCustsRepShow(data: value)));
                 });
               },
+              iconPath: AppAssets.repsIcon[6],
             ),
             //تعديل
             LinkPreviewComp(
@@ -416,6 +424,7 @@ class _ReportsState extends State<Reports> {
                           builder: (_) => InventoryRepShow(data: value)));
                 });
               },
+              iconPath: AppAssets.repsIcon[7],
             ),
             //تعديل
             LinkPreviewComp(
@@ -432,10 +441,12 @@ class _ReportsState extends State<Reports> {
                   }
                 });
               },
+              iconPath: AppAssets.repsIcon[8],
             ),
           ],
         ),
       ),
     );
   }
+  ///end update 1/7/2023///
 }
